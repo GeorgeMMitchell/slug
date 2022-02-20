@@ -79,7 +79,8 @@ class basic_logstream : public std::basic_ostream<CharT, Traits> {
   IMPLICIT basic_logstream& open(path_type const& filepath) {
     constexpr auto flags = std::ios::binary | std::ios::out | std::ios::app;
 
-    if (is_open()) close();
+    if (is_open())
+      close();
 
     if (auto&& buf = m_filebuf.open(filepath, flags); buf == nullptr)
       os_type::setstate(std::ios::failbit);
@@ -163,7 +164,8 @@ void swap(synchronized_atomic<T>& lhs, synchronized_atomic<T>& rhs) noexcept {
 /// \brief Main logger class
 /// \tparam CharT
 /// \tparam Traits
-template <typename CharT, typename Traits = std::char_traits<CharT>,
+template <typename CharT,
+          typename Traits = std::char_traits<CharT>,
           typename StrAllocator = std::allocator<CharT>>
 class basic_logger {
  public:
@@ -363,7 +365,8 @@ class basic_logger {
 };  // ^ basic_logger ^
 
 /// \brief basic_logger swap specialization
-template <typename CharT, typename Traits = std::char_traits<CharT>,
+template <typename CharT,
+          typename Traits = std::char_traits<CharT>,
           typename StrAllocator = std::allocator<CharT>>
 void swap(basic_logger<CharT, Traits, StrAllocator>& lhs,
           basic_logger<CharT, Traits, StrAllocator>& rhs) {
@@ -373,11 +376,12 @@ void swap(basic_logger<CharT, Traits, StrAllocator>& lhs,
 using logger = basic_logger<char, std::char_traits<char>, std::allocator<char>>;
 using wlogger =
     basic_logger<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t>>;
-using u16logger = basic_logger<char16_t, std::char_traits<char16_t>,
+using u16logger = basic_logger<char16_t,
+                               std::char_traits<char16_t>,
                                std::allocator<char16_t>>;
-using u32logger = basic_logger<char32_t, std::char_traits<char32_t>,
+using u32logger = basic_logger<char32_t,
+                               std::char_traits<char32_t>,
                                std::allocator<char32_t>>;
-
 
 #ifdef SLUG_LOG
 extern logger g_logger;
