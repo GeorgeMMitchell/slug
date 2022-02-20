@@ -6,16 +6,13 @@
 #endif
 
 #include <atomic>
-#include <cassert>
 #include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <mutex>
 #include <sstream>
-#include <string>
 #include <thread>
-#include <utility>
 
 #ifndef IMPLICIT
 #define IMPLICIT
@@ -127,6 +124,42 @@ using wlogstream = basic_logstream<wchar_t>;
 using u16logstream = basic_logstream<char16_t>;
 using u32logstream = basic_logstream<char32_t>;
 
+/// \brief std::atomic with thread-safe swapping
+template <typename T>
+class synchronized_atomic : public std::atomic<T> {
+ public:
+  using atomic_type = std::atomic<T>;
+
+ private:
+  std::mutex mutable m_mtx;
+
+ public:
+  constexpr synchronized_atomic() noexcept(
+      std::is_nothrow_default_constructible_v<T>)
+      : atomic_type{}, m_mtx{} {}
+
+  constexpr synchronized_atomic(T const v) noexcept : atomic_type{v}, m_mtx{} {}
+
+  synchronized_atomic(synchronized_atomic const&) = delete;
+
+  synchronized_atomic& operator=(synchronized_atomic const&) = delete;
+
+  [[nodiscard]] constexpr auto lock() const noexcept {
+    return std::lock_guard{m_mtx};
+  }
+
+  void swap(synchronized_atomic& rhs) noexcept {
+    auto l_lhs{lock()};
+    auto l_rhs{rhs.lock()};
+    atomic_type::store(rhs.exchange(atomic_type::load()));
+  }
+};  // ^ synchronized_atomic ^
+
+template <typename T>
+void swap(synchronized_atomic<T>& lhs, synchronized_atomic<T>& rhs) noexcept {
+  lhs.swap(rhs);
+}
+
 /// \brief Main logger class
 /// \tparam CharT
 /// \tparam Traits
@@ -151,7 +184,7 @@ class basic_logger {
   logstream_type mutable m_lstrm;
 
   /// \brief Default logging level
-  std::atomic<log_level> m_min_lvl_atm;
+  synchronized_atomic<log_level> m_min_lvl_atm;
 
  public:
   /// \brief Initializes basic_logger for console output
@@ -188,7 +221,7 @@ class basic_logger {
   /// \brief Locks the basic_logstream mutex in the caller's scope
   /// \returns std::unique_lock<decltype(m_lstrm_mtx)>
   [[nodiscard]] auto lock_stream() const noexcept {
-    return std::unique_lock{m_lstrm_mtx};
+    return std::lock_guard{m_lstrm_mtx};
   }
 
   /// \brief Sets a new default logging level value
@@ -316,14 +349,15 @@ class basic_logger {
   /// \brief Returns initialization time relative to epoch in milliseconds
   constexpr auto start_time() const noexcept { return m_start_time; }
 
-  /// \brief Swap implementation
+  /// \brief basic_logger swap implementation
   void swap(basic_logger& rhs) {
     if (this != std::addressof(rhs)) {
-      auto l{lock_stream()};
-      auto lr{rhs.lock_stream()};
+      auto l_lhs{lock_stream()};
+      auto l_rhs{rhs.lock_stream()};
+
       std::swap(m_start_time, rhs.m_start_time);
       m_lstrm.swap(rhs.m_lstrm);
-      m_min_lvl_atm.store(rhs.m_min_lvl_atm.exchange(m_min_lvl_atm.load()));
+      m_min_lvl_atm.swap(rhs.m_min_lvl_atm);
     }
   }
 };  // ^ basic_logger ^
@@ -343,6 +377,7 @@ using u16logger = basic_logger<char16_t, std::char_traits<char16_t>,
                                std::allocator<char16_t>>;
 using u32logger = basic_logger<char32_t, std::char_traits<char32_t>,
                                std::allocator<char32_t>>;
+
 
 #ifdef SLUG_LOG
 extern logger g_logger;
