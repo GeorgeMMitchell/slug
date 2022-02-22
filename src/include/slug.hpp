@@ -53,13 +53,9 @@ class basic_logstream : public std::basic_ostream<CharT, Traits> {
 
   virtual ~basic_logstream() { close(); }
 
-<<<<<<< HEAD
   /// \brief Gets console sink
   /// \returns std::clog or std::wclog
   constexpr auto& get_clog() const noexcept {
-=======
-  constexpr std::basic_ostream<CharT, Traits>& get_clog() const noexcept {
->>>>>>> 99ef7da4c8683c5b88957db58ccd32aa551c8dfc
     if constexpr (std::is_same_v<CharT, char>)
       return std::clog;
     else
