@@ -53,6 +53,8 @@ class basic_logstream : public std::basic_ostream<CharT, Traits> {
 
   virtual ~basic_logstream() { close(); }
 
+  /// \brief Gets console sink
+  /// \returns std::clog or std::wclog
   constexpr auto& get_clog() const noexcept {
     if constexpr (std::is_same_v<CharT, char>)
       return std::clog;
@@ -298,22 +300,43 @@ class basic_logger {
     auto sstrm = stringstream_type{std::ios_base::out};
 
     sstrm << '[' << std::setw(5) << std::this_thread::get_id() << ',' << ' ';
-    sstrm << std::fixed << std::setprecision(3) << elapsed_time() << "] ";
+    sstrm << std::fixed << std::setprecision(3)
+          << time_cast<double>(elapsed_time()) << "] ";
 
     return sstrm.str();
   }
 
   /// \brief Returns the current time since epoch in milliseconds
-  auto current_time() const noexcept {
+  std::chrono::milliseconds current_time() const noexcept {
     namespace chr = std::chrono;
     auto const now = chr::steady_clock::now().time_since_epoch();
     return chr::duration_cast<chr::milliseconds>(now);
   }
 
-  /// \brief Returns the time since object initialization in milliseconds
-  auto elapsed_time() const noexcept {
+  /// \brief Returns the time since object initialization in seconds
+  std::chrono::milliseconds elapsed_time() const noexcept {
     namespace chr = std::chrono;
-    return chr::duration<double>{current_time() - m_start_time}.count();
+    return current_time() - m_start_time;
+  }
+
+  /// \brief Casts time duration to another type
+  /// \tparam OutRepT Type to convert the input time duration to
+  /// \tparam OutPeriodT Period type to convert the input time duration to (defaults to seconds)
+  /// \tparam InRepT Input time duration type
+  /// \tparam InPeriodT Input period type
+  /// \param in Input time duration to convert from
+  template <typename OutRepT,
+            typename OutPeriodT = std::ratio<1>,
+            typename InRepT,
+            typename InPeriodT>
+  constexpr auto time_cast(
+      std::chrono::duration<InRepT, InPeriodT>&& in) const noexcept {
+    using in_duration_type = std::chrono::duration<InRepT, InPeriodT>;
+    using out_duration_type = std::chrono::duration<OutRepT, OutPeriodT>;
+
+    return std::chrono::duration_cast<out_duration_type>(
+               std::forward<in_duration_type>(in))
+        .count();
   }
 
   /// \brief Returns initialization time relative to epoch in milliseconds
