@@ -14,26 +14,9 @@
 #include <sstream>
 #include <thread>
 
-#ifndef IMPLICIT
-#define IMPLICIT
-#endif
+#define SLUG_IMPLICIT
 
 namespace slug {
-
-enum class log_level : std::uint8_t { Trace, Info, Warn, Error, Fatal, None };
-
-static constexpr auto const none = log_level::None;
-static constexpr auto const fatal = log_level::Fatal;
-static constexpr auto const error = log_level::Error;
-static constexpr auto const warn = log_level::Warn;
-static constexpr auto const info = log_level::Info;
-static constexpr auto const trace = log_level::Trace;
-
-#ifndef NDEBUG
-static constexpr auto const default_lvl = slug::info;
-#else
-static constexpr auto const default_lvl = slug::error;
-#endif
 
 /// \brief std::ostream class for sending output to a file or console
 /// \tparam CharT character type
@@ -55,7 +38,7 @@ class basic_logstream : public std::basic_ostream<CharT, Traits> {
 
   /// \brief Initialize basic_logstream for file output
   /// \param filepath Path to output file
-  IMPLICIT basic_logstream(path_type const& filepath)
+  SLUG_IMPLICIT basic_logstream(path_type const& filepath)
       : os_type{std::clog.rdbuf()} {
     open(filepath);
   }
@@ -76,7 +59,7 @@ class basic_logstream : public std::basic_ostream<CharT, Traits> {
   /// \brief Opens file for output
   /// \param filepath Path to output file
   /// \returns *this
-  IMPLICIT basic_logstream& open(path_type const& filepath) {
+  SLUG_IMPLICIT basic_logstream& open(path_type const& filepath) {
     constexpr auto flags = std::ios::binary | std::ios::out | std::ios::app;
 
     if (is_open())
@@ -125,6 +108,16 @@ using wlogstream = basic_logstream<wchar_t>;
 using u16logstream = basic_logstream<char16_t>;
 using u32logstream = basic_logstream<char32_t>;
 
+enum class log_level : std::uint8_t {
+  All,
+  Trace,
+  Info,
+  Warn,
+  Error,
+  Fatal,
+  None
+};
+
 /// \brief Main logger class
 /// \tparam CharT
 /// \tparam Traits
@@ -138,6 +131,12 @@ class basic_logger {
   using path_type = typename logstream_type::path_type;
   using string_type = std::basic_string<CharT, Traits, StrAllocator>;
   using stringstream_type = std::basic_stringstream<CharT, Traits>;
+
+#ifndef NDEBUG
+  static constexpr auto const default_lvl = log_level::Info;
+#else
+  static constexpr auto const default_lvl = log_level::Error;
+#endif
 
  private:
   /// \brief basic_logger object initialization time relative to epoch
@@ -161,14 +160,14 @@ class basic_logger {
   /// \brief Initializes basic_logger for file output
   /// \param lvl Sets default logging level
   /// \param filepath Path to output file
-  IMPLICIT basic_logger(log_level const lvl, path_type const& filepath)
+  SLUG_IMPLICIT basic_logger(log_level const lvl, path_type const& filepath)
       : m_lstrm{filepath}, m_min_lvl_atm{lvl} {}
 
   /// \brief Initializes basic_logger for file output
   /// \param filepath Path to output file
   /// \param lvl Sets default logging level
-  IMPLICIT
-  basic_logger(path_type const& filepath, log_level const lvl = default_lvl)
+  SLUG_IMPLICIT basic_logger(path_type const& filepath,
+                             log_level const lvl = default_lvl)
       : m_lstrm{filepath}, m_min_lvl_atm{lvl} {}
 
   basic_logger(basic_logger const&) = delete;
@@ -218,71 +217,71 @@ class basic_logger {
     return *this;
   }
 
-  /// \brief Logs fatal message(s) to sink
+  /// \brief Logs fatal messages to the sink
   /// \tparam Ts Template parameter pack of message types
   /// \param msgs Function parameter pack of messages to log
   /// \returns *this
   template <typename... Ts>
   auto const& fatal(Ts&&... msgs) const {
-    if (slug::fatal >= m_min_lvl_atm.load()) {
+    if (log_level::Fatal >= m_min_lvl_atm.load()) {
       auto l{lock_stream()};
-      m_lstrm << msg_prefix() << "FATAL: ";
+      m_lstrm << msg_prefix() << "fatal: ";
       (m_lstrm << ... << std::forward<Ts>(msgs)) << std::endl;
     }
     return *this;
   }
 
-  /// \brief Logs error message(s) to sink
+  /// \brief Logs error messages to the sink
   /// \tparam Ts Template parameter pack of message types
   /// \param msgs Function parameter pack of messages to log
   /// \returns *this
   template <typename... Ts>
   auto const& error(Ts&&... msgs) const {
-    if (slug::error >= m_min_lvl_atm.load()) {
+    if (log_level::Error >= m_min_lvl_atm.load()) {
       auto l{lock_stream()};
-      m_lstrm << msg_prefix() << "ERROR: ";
+      m_lstrm << msg_prefix() << "error: ";
       (m_lstrm << ... << std::forward<Ts>(msgs)) << std::endl;
     }
     return *this;
   }
 
-  /// \brief Logs warning message(s) to sink
+  /// \brief Logs warning messages to the sink
   /// \tparam Ts Template parameter pack of message types
   /// \param msgs Function parameter pack of messages to log
   /// \returns *this
   template <typename... Ts>
   auto const& warning(Ts&&... msgs) const {
-    if (slug::warn >= m_min_lvl_atm.load()) {
+    if (log_level::Warn >= m_min_lvl_atm.load()) {
       auto l{lock_stream()};
-      m_lstrm << msg_prefix() << "WARN:  ";
+      m_lstrm << msg_prefix() << "warn:  ";
       (m_lstrm << ... << std::forward<Ts>(msgs)) << std::endl;
     }
     return *this;
   }
 
-  /// \brief Logs info message(s) to sink
+  /// \brief Logs info messages to the sink
   /// \tparam Ts Template parameter pack of message types
   /// \param msgs Function parameter pack of messages to log
   /// \returns *this
   template <typename... Ts>
   auto const& info(Ts&&... msgs) const {
-    if (slug::info >= m_min_lvl_atm.load()) {
+    if (log_level::Info >= m_min_lvl_atm.load()) {
       auto l{lock_stream()};
-      m_lstrm << msg_prefix() << "INFO:  ";
+      m_lstrm << msg_prefix() << "info:  ";
       (m_lstrm << ... << std::forward<Ts>(msgs)) << std::endl;
     }
     return *this;
   }
 
-  /// \brief Logs trace message(s) to sink
+  /// \brief Logs trace messages to the sink
   /// \tparam Ts Template parameter pack of message types
   /// \param msgs Function parameter pack of messages to log
   /// \returns *this
   template <typename... Ts>
   auto const& trace(Ts&&... msgs) const {
-    if (slug::trace >= m_min_lvl_atm.load()) {
+    if (log_level::Trace >= m_min_lvl_atm.load()) {
       auto l{lock_stream()};
-      m_lstrm << msg_prefix() << "TRACE: ";
+      m_lstrm << msg_prefix() << "trace: ";
       (m_lstrm << ... << std::forward<Ts>(msgs)) << std::endl;
     }
     return *this;
@@ -314,7 +313,15 @@ class basic_logger {
 
   /// \brief Returns initialization time relative to epoch in milliseconds
   constexpr auto start_time() const noexcept { return m_start_time; }
+
+  void swap(basic_logger&) = delete;
 };  // ^ basic_logger ^
+
+template <typename CharT,
+          typename Traits = std::char_traits<CharT>,
+          typename StrAllocator = std::allocator<CharT>>
+void swap(basic_logger<CharT, Traits, StrAllocator>& lhs,
+          basic_logger<CharT, Traits, StrAllocator>& rhs) = delete;
 
 using logger = basic_logger<char, std::char_traits<char>, std::allocator<char>>;
 using wlogger =
@@ -341,6 +348,14 @@ extern u16logger g_u16logger;
 #ifdef SLUG_U32LOG
 extern u32logger g_u32logger;
 #endif
+
+static constexpr auto const none = log_level::None;
+static constexpr auto const fatal = log_level::Fatal;
+static constexpr auto const error = log_level::Error;
+static constexpr auto const warn = log_level::Warn;
+static constexpr auto const info = log_level::Info;
+static constexpr auto const trace = log_level::Trace;
+static constexpr auto const all = log_level::All;
 
 }  // namespace slug
 
