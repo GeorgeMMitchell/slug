@@ -133,7 +133,7 @@ template <typename CharT,
           typename StrAllocator = std::allocator<CharT>>
 class basic_logger {
  public:
-  using string_allocator_type = StrAllocator;
+  using allocator_type = StrAllocator;
   using logstream_type = basic_logstream<CharT, Traits>;
   using path_type = typename logstream_type::path_type;
   using string_type = std::basic_string<CharT, Traits, StrAllocator>;
