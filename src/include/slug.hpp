@@ -320,19 +320,19 @@ class basic_logger {
   }
 
   /// \brief Casts time duration to another type
-  /// \tparam OutRepT Type to convert the input time duration to
-  /// \tparam OutPeriodT Period type to convert the input time duration to (defaults to seconds)
-  /// \tparam InRepT Input time duration type
-  /// \tparam InPeriodT Input period type
+  /// \tparam OutRep Type to convert the input time duration to
+  /// \tparam OutPeriod Period type to convert the input time duration to (defaults to seconds)
+  /// \tparam InRep Input time duration type
+  /// \tparam InPeriod Input period type
   /// \param in Input time duration to convert from
-  template <typename OutRepT,
-            typename OutPeriodT = std::ratio<1>,
-            typename InRepT,
-            typename InPeriodT>
+  template <typename OutRep,
+            typename OutPeriod = std::ratio<1>,
+            typename InRep,
+            typename InPeriod>
   constexpr auto time_cast(
-      std::chrono::duration<InRepT, InPeriodT>&& in) const noexcept {
-    using in_duration_type = std::chrono::duration<InRepT, InPeriodT>;
-    using out_duration_type = std::chrono::duration<OutRepT, OutPeriodT>;
+      std::chrono::duration<InRep, InPeriod>&& in) const noexcept {
+    using in_duration_type = std::chrono::duration<InRep, InPeriod>;
+    using out_duration_type = std::chrono::duration<OutRep, OutPeriod>;
 
     return std::chrono::duration_cast<out_duration_type>(
                std::forward<in_duration_type>(in))
