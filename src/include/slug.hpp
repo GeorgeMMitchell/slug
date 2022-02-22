@@ -321,7 +321,8 @@ class basic_logger {
 
   /// \brief Casts time duration to another type
   /// \tparam OutRep Type to convert the input time duration to
-  /// \tparam OutPeriod Period to convert the input time duration to (defaults to seconds)
+  /// \tparam OutPeriod Period to convert the input time duration to
+  ///         (defaults to seconds)
   /// \tparam InRep Input time duration type
   /// \tparam InPeriod Input period type
   /// \param in Input time duration to convert from
