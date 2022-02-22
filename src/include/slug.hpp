@@ -28,18 +28,22 @@ class basic_logstream : public std::basic_ostream<CharT, Traits> {
   using filebuf_type = std::basic_filebuf<CharT, Traits>;
   using path_type = std::filesystem::path;
 
+  static_assert(!std::is_same_v<CharT, char16_t>, "UTF-16 output streams are not supported by the standard library");
+
+  static_assert(!std::is_same_v<CharT, char32_t>, "UTF-32 output streams are not supported by the standard library");
+
  private:
   /// \brief File buffer
   filebuf_type m_filebuf{};
 
  public:
   /// \brief Initialize basic_logstream for console output
-  basic_logstream() : os_type{get_clog().rdbuf()} {}
+  basic_logstream() : os_type{clog().rdbuf()} {}
 
   /// \brief Initialize basic_logstream for file output
   /// \param filepath Path to output file
   SLUG_IMPLICIT basic_logstream(path_type const& filepath)
-      : os_type{get_clog().rdbuf()} {
+      : os_type{clog().rdbuf()} {
     open(filepath);
   }
 
@@ -55,7 +59,7 @@ class basic_logstream : public std::basic_ostream<CharT, Traits> {
 
   /// \brief Gets console sink
   /// \returns std::clog or std::wclog
-  constexpr auto& get_clog() const noexcept {
+  constexpr auto& clog() const noexcept {
     if constexpr (std::is_same_v<CharT, char>)
       return std::clog;
     else
@@ -90,7 +94,7 @@ class basic_logstream : public std::basic_ostream<CharT, Traits> {
 
     if (is_open()) {
       m_filebuf.close();
-      os_type::rdbuf(get_clog().rdbuf());
+      os_type::rdbuf(clog().rdbuf());
     }
 
     return *this;
