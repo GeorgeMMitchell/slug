@@ -34,12 +34,12 @@ class basic_logstream : public std::basic_ostream<CharT, Traits> {
 
  public:
   /// \brief Initialize basic_logstream for console output
-  basic_logstream() : os_type{std::clog.rdbuf()} {}
+  basic_logstream() : os_type{get_clog().rdbuf()} {}
 
   /// \brief Initialize basic_logstream for file output
   /// \param filepath Path to output file
   SLUG_IMPLICIT basic_logstream(path_type const& filepath)
-      : os_type{std::clog.rdbuf()} {
+      : os_type{get_clog().rdbuf()} {
     open(filepath);
   }
 
@@ -52,6 +52,13 @@ class basic_logstream : public std::basic_ostream<CharT, Traits> {
   basic_logstream& operator=(basic_logstream&&) = default;
 
   virtual ~basic_logstream() { close(); }
+
+  constexpr auto& get_clog() const noexcept {
+    if constexpr (std::is_same_v<CharT, char>)
+      return std::clog;
+    else
+      return std::wclog;
+  }
 
   /// \brief Checks if the file buffer's associated file is open
   bool is_open() const { return m_filebuf.is_open(); }
@@ -81,7 +88,7 @@ class basic_logstream : public std::basic_ostream<CharT, Traits> {
 
     if (is_open()) {
       m_filebuf.close();
-      os_type::rdbuf(std::clog.rdbuf());
+      os_type::rdbuf(get_clog().rdbuf());
     }
 
     return *this;
@@ -105,8 +112,6 @@ void swap(basic_logstream<CharT, Traits>& lhs,
 
 using logstream = basic_logstream<char>;
 using wlogstream = basic_logstream<wchar_t>;
-using u16logstream = basic_logstream<char16_t>;
-using u32logstream = basic_logstream<char32_t>;
 
 enum class log_level : std::uint8_t {
   All,
@@ -326,27 +331,13 @@ void swap(basic_logger<CharT, Traits, StrAllocator>& lhs,
 using logger = basic_logger<char, std::char_traits<char>, std::allocator<char>>;
 using wlogger =
     basic_logger<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t>>;
-using u16logger = basic_logger<char16_t,
-                               std::char_traits<char16_t>,
-                               std::allocator<char16_t>>;
-using u32logger = basic_logger<char32_t,
-                               std::char_traits<char32_t>,
-                               std::allocator<char32_t>>;
 
-#ifdef SLUG_LOG
+#ifdef SLUG_LOG_GLOBAL
 extern logger g_logger;
 #endif
 
-#ifdef SLUG_WLOG
+#ifdef SLUG_WLOG_GLOBAL
 extern wlogger g_wlogger;
-#endif
-
-#ifdef SLUG_U16LOG
-extern u16logger g_u16logger;
-#endif
-
-#ifdef SLUG_U32LOG
-extern u32logger g_u32logger;
 #endif
 
 static constexpr auto const none = log_level::None;

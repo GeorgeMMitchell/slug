@@ -2,7 +2,8 @@ add_library("slug")
 
 target_compile_definitions("slug"
   PUBLIC
-    "SLUG_LOG")
+    $<$<BOOL:${SLUG_ENABLE_GLOBAL}>:"SLUG_LOG_GLOBAL">
+    $<$<BOOL:${SLUG_ENABLE_WCHAR_GLOBAL}>:"SLUG_WLOG_GLOBAL">)
 
 target_compile_features("slug"
   PUBLIC
