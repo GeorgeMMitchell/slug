@@ -2,6 +2,14 @@ cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 
 project("slug" VERSION 0.0.0.0 LANGUAGES CXX)
 
+set(SLUG_ENABLE_GLOBAL ON CACHE BOOL "Builds slug with the default global instance")
+
+set(SLUG_ENABLE_WCHAR_GLOBAL ON CACHE BOOL "Builds slug with the wide character format global instance")
+
+set(SLUG_ENABLE_TESTING ON CACHE BOOL "Build and test slug")
+
 add_subdirectory("src")
 
-add_subdirectory("test")
+if(${SLUG_ENABLE_TESTING})
+  add_subdirectory("test")
+endif()
