@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.17 FATAL_ERROR)
 
-project("slug" VERSION 0.0.0.0 LANGUAGES CXX)
+project("slug" VERSION 0.1.0.0 LANGUAGES CXX)
 
 set(SLUG_ENABLE_GLOBAL ON CACHE BOOL "Builds slug with the default global instance")
 
