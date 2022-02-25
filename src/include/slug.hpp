@@ -14,7 +14,9 @@
 #include <sstream>
 #include <thread>
 
+#ifndef SLUG_IMPLICIT
 #define SLUG_IMPLICIT
+#endif
 
 namespace slug {
 
@@ -28,9 +30,13 @@ class basic_logstream : public std::basic_ostream<CharT, Traits> {
   using filebuf_type = std::basic_filebuf<CharT, Traits>;
   using path_type = std::filesystem::path;
 
-  static_assert(!std::is_same_v<CharT, char16_t>, "UTF-16 output streams are not supported by the standard library");
+  static_assert(
+      !std::is_same_v<CharT, char16_t>,
+      "UTF-16 console streams are not supported by the standard library");
 
-  static_assert(!std::is_same_v<CharT, char32_t>, "UTF-32 output streams are not supported by the standard library");
+  static_assert(
+      !std::is_same_v<CharT, char32_t>,
+      "UTF-32 console streams are not supported by the standard library");
 
  private:
   /// \brief File buffer
