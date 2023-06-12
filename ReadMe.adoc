@@ -1,0 +1,24 @@
+// Copyright (c) 2023, George Mitchell
+// See License.txt for license information
+
+//:toc:
+//:toc-placement!:
+
+= The Slug Logger
+    Slug is lightweight C++17 logging library. It is currently in active development.
+
+//toc::[]
+
+== Features
+    * Macro-based global calls enables compile-time removal of all log messages for more efficient Release builds
+    * ``inline``'d globals ensure correct linking regardless of whether Slug is linked as a shared or static library
+    * Utilizes https://github.com/fmtlib/fmt/[libfmt] for all output formatting
+    * Allows for customized message formats through overriding the ``basic_message_format_base`` class
+    * Wide and native character aware
+    * Allocator aware
+
+== Building Slug
+    Slug requires CMake 3.12 or greater, https://github.com/fmtlib/fmt/[libfmt], and a C++17-compliant compiler. https://github.com/catchorg/Catch2/[Catch2] is also required for building the test executable. Both libfmt and Catch2 are automatically through FetchContent if not found.
+
+== Using Slug
+    Consume Slug by adding "slug::slug" to your CMake project's target_link_libraries call. Add "slug::slug-header-only" to consume slug as a header-only library.
