@@ -5,7 +5,7 @@
 //:toc-placement!:
 
 = The Slug Logger
-    Slug is lightweight C++17 logging library. It is currently in active development.
+    Slug is lightweight C++17 logging library designed to provide a correct, safe and minimal logging interface. It is currently in active development.
 
 //toc::[]
 
