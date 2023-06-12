@@ -28,5 +28,5 @@ Both libfmt and Catch2 are automatically through FetchContent if not found.
 
 == Using Slug
     
-Consume Slug by adding "slug::slug" to your CMake project's target_link_libraries call. 
-Add "slug::slug-header-only" to consume slug as a header-only library.
+Consume Slug by adding ``slug::slug`` to your CMake project's target_link_libraries call. 
+Add ``slug::slug-header-only`` to consume slug as a header-only library.
