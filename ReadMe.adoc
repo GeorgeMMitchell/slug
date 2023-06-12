@@ -6,7 +6,7 @@
 
 = The Slug Logger
 
-Slug is lightweight C++17 logging library designed to provide a correct, safe and minimal logging interface. 
+Slug is lightweight C++17 logging library designed to provide a correct, safe and minimal logging interface.
 It is currently in active development.
 
 //toc::[]
@@ -22,11 +22,11 @@ It is currently in active development.
 
 == Building Slug
 
-Slug requires CMake 3.12 or greater, https://github.com/fmtlib/fmt/[libfmt], and a C++17-compliant compiler. 
-https://github.com/catchorg/Catch2/[Catch2] is also required for building the test executable. 
+Slug requires CMake 3.12 or greater, https://github.com/fmtlib/fmt/[libfmt], and a C++17-compliant compiler.
+https://github.com/catchorg/Catch2/[Catch2] is also required for building the test executable.
 Both libfmt and Catch2 are automatically through FetchContent if not found.
 
 == Using Slug
-    
-Consume Slug by adding ``slug::slug`` to your CMake project's target_link_libraries call. 
+
+Consume Slug by adding ``slug::slug`` to your CMake project's target_link_libraries call.
 Add ``slug::slug-header-only`` to consume slug as a header-only library.
