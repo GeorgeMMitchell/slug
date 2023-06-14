@@ -20,9 +20,8 @@ target_compile_options(
   slug-test
   PRIVATE
     $<$<CXX_COMPILER_ID:Clang>:
-      -Weverything
-      -Wno-c++98-compat
-      -Wno-c++98-compat-pedantic>
+      -Wall
+      -Wextra>
 
     $<$<CXX_COMPILER_ID:GNU>:
       -Wall
