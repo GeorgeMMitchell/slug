@@ -562,11 +562,11 @@ using wlogger = basic_logger<wchar_t, std::char_traits<wchar_t>, allocator>;
 
 namespace detail {
 
-#ifdef SLUG_GLOBAL
+#if SLUG_GLOBAL
 extern logger g_logger;
 #endif
 
-#ifdef SLUG_W_GLOBAL
+#if SLUG_W_GLOBAL
 extern wlogger g_wlogger;
 #endif
 
