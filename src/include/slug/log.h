@@ -4,10 +4,22 @@
 #ifndef SLUG_H_LOG
 #define SLUG_H_LOG
 
+#include <fmt/format.h>
 #include <fmt/std.h>
 #include <fmt/xchar.h>
 
+#include <chrono>
+#include <filesystem>
+#include <fstream>
+#include <iterator>
+#include <memory_resource>
 #include <mutex>
+#include <ostream>
+#include <string>
+#include <string_view>
+#include <thread>
+#include <type_traits>
+#include <utility>
 
 #define SLUG_VERSION_MAJOR 0
 #define SLUG_VERSION_MINOR 1
