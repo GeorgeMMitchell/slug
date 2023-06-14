@@ -18,7 +18,7 @@ struct config final {
 
 }  // namespace slug::test
 
-TEST_CASE("Logger Branching", "[branching]") {
+TEST_CASE("Logger Declaration", "[branching]") {
   [[maybe_unused]] auto &&logger = slug::logger{std::clog};
 
   logger.set_severity(slug::trace);
@@ -27,14 +27,14 @@ TEST_CASE("Logger Branching", "[branching]") {
   [[maybe_unused]] auto &&severity = logger.get_severity();
   [[maybe_unused]] auto &&start_time = logger.get_start_time();
 
-  logger.open_file("slug-test.log");
-  logger.log(slug::trace, "Writing message to file");
+  logger.open_file(slug::test::config::out_filename);
+  logger.log(slug::trace, "Writing message to {}", "file");
 
   logger.open_console(std::clog);
-  logger.log(slug::trace, "Writing message to console");
+  logger.log(slug::trace, "Writing message to {}", "console");
 }
 
-TEST_CASE("Wide Logger Branching", "[branching]") {
+TEST_CASE("Wide Logger Declaration", "[branching]") {
   [[maybe_unused]] auto &&wlogger = slug::wlogger{std::wclog};
 
   wlogger.set_severity(slug::trace);
@@ -43,14 +43,14 @@ TEST_CASE("Wide Logger Branching", "[branching]") {
   [[maybe_unused]] auto &&severity = wlogger.get_severity();
   [[maybe_unused]] auto &&start_time = wlogger.get_start_time();
 
-  wlogger.open_file("wslug-test.log");
+  wlogger.open_file(slug::test::config::wout_filename);
   wlogger.log(slug::trace, L"Writing wide message to file");
 
   wlogger.open_console(std::wclog);
   wlogger.log(slug::trace, L"Writing wide message to console");
 }
 
-TEST_CASE("Native Global Macro", "[slug.globals]") {
+TEST_CASE("Native Global Macro", "[globals]") {
   static_assert(SLUG_GLOBAL,
                 "Enable slug's global logging instance (-DSLUG_GLOBAL=ON)");
 
@@ -66,10 +66,9 @@ TEST_CASE("Native Global Macro", "[slug.globals]") {
   SLUG_OPEN_CONSOLE(std::clog);
 }
 
-//TEST_CASE("Wide Global Macro", "[slug.globals]") {
-//  static_assert(SLUG_W_GLOBAL,
-//                "Enable slug's wide character global logging instance "
-//                "(-DSLUG_WIDECHAR_GLOBAL=ON)");
+// TEST_CASE("Wide Global Macro", "[globals]") {
+//   static_assert(SLUG_W_GLOBAL,
+//                 "Enable slug's wide character global logging instance ");
 
 //  SLUG_W_SET_SEVERITY(slug::trace);
 
