@@ -146,7 +146,7 @@ target_link_libraries(slug-header-only INTERFACE fmt::fmt-header-only)
 target_include_directories(slug-header-only
                            INTERFACE ${SLUG_PROJECT_DIR}/src/include)
 target_compile_definitions(
-  slug-header-only INTERFACE $<$<CONFIG:Debug,RelWithDebInfo>:SLUG_DEBUG>)
+  slug-header-only INTERFACE $<$<CONFIG:Debug,RelWithDebInfo>:SLUG_DEBUG> SLUG_HEADER_ONLY)
 
 if(SLUG_ROOT_PROJECT OR BUILD_TESTING)
   include(CTest)
@@ -161,6 +161,8 @@ if(SLUG_ROOT_PROJECT OR BUILD_TESTING)
   endif()
 
   add_executable(slug-test ${SLUG_PROJECT_DIR}/test/src/slug-test.cc)
+
+  add_compile_definitions(SLUG_GLOBAL SLUG_W_GLOBAL)
 
   target_link_libraries(slug-test PRIVATE slug Catch2::Catch2WithMain)
 
