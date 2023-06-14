@@ -275,8 +275,10 @@ struct basic_logger_config final {
   using std_shared_message_format_base = std::shared_ptr<message_format_base>;
 
   severity_t severity = default_severity;
+
   std_shared_message_format_base message_format =
       std::make_shared<yaml_message_format>(Allocator<Char>{});
+
   std::ios::openmode openmode = std::ios::app;
 
 };  // basic_logger_config
