@@ -12,8 +12,8 @@
 // OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 // PERFORMANCE OF THIS SOFTWARE.
 
-#ifndef SLUG_H_LOG
-#define SLUG_H_LOG
+#ifndef SLUG_LOG_H_
+#define SLUG_LOG_H_
 
 #include <fmt/format.h>
 #include <fmt/std.h>
@@ -615,4 +615,4 @@ extern wlogger g_wlogger;
 
 #endif  // SLUG_WIDECHAR_GLOBAL
 
-#endif  // SLUG_H_LOG
+#endif  // SLUG_LOG_H_
