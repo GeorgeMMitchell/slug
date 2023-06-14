@@ -169,10 +169,10 @@ struct basic_message_format_base {
 
   virtual ~basic_message_format_base() {}
 
-  inline basic_message_format_base() noexcept(noexcept(char_allocator{}))
+  basic_message_format_base() noexcept(noexcept(char_allocator{}))
       : m_char_allocator{} {}
 
-  explicit inline basic_message_format_base(
+  explicit basic_message_format_base(
       char_allocator const &alloc) noexcept(noexcept(char_allocator{}))
       : m_char_allocator{alloc} {}
 
