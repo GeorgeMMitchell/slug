@@ -122,7 +122,7 @@ target_compile_definitions(
   slug
   PUBLIC $<$<CONFIG:Debug,RelWithDebInfo>:SLUG_DEBUG>
          $<$<BOOL:${SLUG_GLOBAL}>:SLUG_GLOBAL>
-         $<$<BOOL:${SLUG_WIDECHAR_GLOBAL}>:SLUG_WIDECHAR_GLOBAL>)
+         $<$<BOOL:${SLUG_WIDECHAR_GLOBAL}>:SLUG_W_GLOBAL>)
 
 if(SLUG_FMT_HEADERONLY)
   target_link_libraries(slug PUBLIC fmt::fmt-header-only)
@@ -162,8 +162,7 @@ if(SLUG_ROOT_PROJECT OR BUILD_TESTING)
 
   add_executable(slug-test ${SLUG_PROJECT_DIR}/test/src/slug-test.cc)
 
-  target_link_libraries(slug-test PRIVATE slug slug-header-only
-                                          Catch2::Catch2WithMain)
+  target_link_libraries(slug-test PRIVATE slug Catch2::Catch2WithMain)
 
   target_compile_options(
     slug-test

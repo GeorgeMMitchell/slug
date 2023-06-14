@@ -554,7 +554,7 @@ namespace detail {
 extern logger g_logger;
 #endif
 
-#ifdef SLUG_WIDECHAR_GLOBAL
+#ifdef SLUG_W_GLOBAL
 extern wlogger g_wlogger;
 #endif
 
@@ -584,7 +584,7 @@ extern wlogger g_wlogger;
 
 #endif  // SLUG_GLOBAL
 
-#ifdef SLUG_WIDECHAR_GLOBAL
+#ifdef SLUG_W_GLOBAL
 
 #define SLUG_W_LOG(severity, msg, ...) \
   slug::detail::g_wlogger.log(severity, msg, __VA_ARGS__)
@@ -605,6 +605,6 @@ extern wlogger g_wlogger;
 #define SLUG_W_OPEN_CONSOLE(os) ((void)0)
 #define SLUG_W_OPEN_NEW_CONSOLE(os) ((void)0)
 
-#endif  // SLUG_WIDECHAR_GLOBAL
+#endif  // SLUG_W_GLOBAL
 
 #endif  // SLUG_LOG_H_
