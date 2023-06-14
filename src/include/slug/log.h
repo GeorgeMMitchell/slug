@@ -233,7 +233,7 @@ struct basic_yaml_message_format final
       basic_message_format_base<Char, CharTraits, Allocator>;
   using std_string = std::basic_string<char_t, char_traits, char_allocator>;
 
-  explicit basic_yaml_message_format(char_allocator const &alloc)
+  explicit basic_yaml_message_format(char_allocator const &alloc) noexcept(noexcept(char_allocator{}))
       : message_format_base{alloc} {}
 
   std_string create_message(message_data const &m) override {
@@ -259,8 +259,7 @@ struct basic_yaml_message_format final
     return std_string{&chars[0], message_format_base::get_char_allocator()};
   }
 
-  std_string create_footer_message() noexcept(
-      noexcept(char_allocator{})) override {
+  std_string create_footer_message() override {
     static constexpr char_t chars[] = {'.', '.', '.', '\n', 0};
     return std_string{&chars[0], message_format_base::get_char_allocator()};
   }
