@@ -340,7 +340,7 @@ struct basic_logger final {
   basic_logger &operator=(basic_logger &&) = delete;
 
   template <typename... Args>
-  auto log(severity_t severity, std_string_view fmt, Args &&...args) {
+  [[maybe_unused]] auto log(severity_t severity, std_string_view fmt, Args &&...args) {
     if (m_logger_config.severity < severity) {
       return emitter{message_data{m_char_allocator}};
     }
