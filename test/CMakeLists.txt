@@ -20,28 +20,18 @@ target_link_libraries(slug-test PRIVATE slug Catch2::Catch2WithMain)
 
 target_compile_options(
   slug-test
-  PRIVATE $<$<CXX_COMPILER_ID:Clang>:
-          -Weverything
-          -Wno-c++98-compat
-          -Wno-c++98-compat-pedantic
-          -Wno-unused-variable
-          # Catch2 debra args library or whatever its called
-          -Wno-sign-conversion
-          # fmt/xchar.h
-          -Wno-undefined-func-template
-          # fmt/format.h
-          -Wno-switch-enum
-          # fmt/core.h
-          -Wno-documentation-unknown-command
-          -Wno-reserved-identifier
-          # fmt/format-inl.h
-          -Wno-missing-noreturn
-          -Wno-global-constructors>
-          $<$<CXX_COMPILER_ID:GNU>:
-          -Wall
-          -Wextra>
-          $<$<CXX_COMPILER_ID:MSVC>:
-          /W4
-          /utf-8>)
+  PRIVATE
+    $<$<CXX_COMPILER_ID:Clang>:
+      -Weverything
+      -Wno-c++98-compat
+      -Wno-c++98-compat-pedantic>
+
+    $<$<CXX_COMPILER_ID:GNU>:
+      -Wall
+      -Wextra>
+
+    $<$<CXX_COMPILER_ID:MSVC>:
+      /W4
+      /utf-8>)
 
 add_test(NAME slug-test COMMAND slug-test)
