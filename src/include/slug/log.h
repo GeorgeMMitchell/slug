@@ -564,38 +564,30 @@ extern wlogger g_wlogger;
 
 #ifdef SLUG_GLOBAL
 
-#define SLUG_LOG_FMT(severity, fmt, ...) \
-  slug::detail::g_logger.log(severity, fmt, __VA_ARGS__)
-
-#define SLUG_LOG(severity, msg) slug::detail::g_logger.log(severity, msg)
+#define SLUG_LOG(severity, msg, ...) \
+  slug::detail::g_logger.log(severity, msg, __VA_ARGS__)
 
 #define SLUG_SET_SEVERITY(severity) \
   slug::detail::g_logger.set_severity(severity)
 
 #define SLUG_OPEN_FILE(path, mode) slug::detail::g_logger.open_file(path, mode)
 
-#define SLUG_OPEN_CONSOLE() slug::detail::g_logger.open_console()
-
-#define SLUG_OPEN_NEW_CONSOLE(os) slug::detail::g_logger.open_console(os)
+#define SLUG_OPEN_CONSOLE(os) slug::detail::g_logger.open_console(os)
 
 #else
 
-#define SLUG_LOG_FMT(severity, fmt, ...) ((void)0)
 #define SLUG_LOG(severity, msg) ((void)0)
 #define SLUG_SET_SEVERITY(severity) ((void)0)
-#define SLUG_SET_ALLOCATOR(alloc) ((void)0)
 #define SLUG_OPEN_FILE(path, mode) ((void)0)
-#define SLUG_OPEN_CONSOLE() ((void)0)
+#define SLUG_OPEN_CONSOLE(os) ((void)0)
 #define SLUG_OPEN_NEW_CONSOLE(os) ((void)0)
 
 #endif  // SLUG_GLOBAL
 
 #ifdef SLUG_WIDECHAR_GLOBAL
 
-#define SLUG_W_LOG_FMT(severity, fmt, ...) \
-  slug::detail::g_wlogger.log(severity, fmt, __VA_ARGS__)
-
-#define SLUG_W_LOG(severity, msg) slug::detail::g_wlogger.log(severity, msg)
+#define SLUG_W_LOG(severity, msg, ...) \
+  slug::detail::g_wlogger.log(severity, msg, __VA_ARGS__)
 
 #define SLUG_W_SET_SEVERITY(severity) \
   slug::detail::g_wlogger.set_severity(severity)
@@ -603,18 +595,14 @@ extern wlogger g_wlogger;
 #define SLUG_W_OPEN_FILE(path, mode) \
   slug::detail::g_wlogger.open_file(path, mode)
 
-#define SLUG_W_OPEN_CONSOLE() slug::detail::g_wlogger.open_console()
-
-#define SLUG_W_OPEN_NEW_CONSOLE(os) slug::detail::g_wlogger.open_console(os)
+#define SLUG_W_OPEN_CONSOLE(os) slug::detail::g_wlogger.open_console(os)
 
 #else
 
-#define SLUG_W_LOG_FMT(severity, fmt, ...) ((void)0)
-#define SLUG_W_LOG(severity, msg) ((void)0)
+#define SLUG_W_LOG(severity, fmt, ...) ((void)0)
 #define SLUG_W_SET_SEVERITY(severity) ((void)0)
-#define SLUG_W_SET_ALLOCATOR(alloc) ((void)0)
 #define SLUG_W_OPEN_FILE(path, mode) ((void)0)
-#define SLUG_W_OPEN_CONSOLE() ((void)0)
+#define SLUG_W_OPEN_CONSOLE(os) ((void)0)
 #define SLUG_W_OPEN_NEW_CONSOLE(os) ((void)0)
 
 #endif  // SLUG_WIDECHAR_GLOBAL
