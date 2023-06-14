@@ -169,10 +169,11 @@ struct basic_message_format_base {
 
   virtual ~basic_message_format_base() {}
 
-  inline basic_message_format_base() noexcept(noexcept(char_allocator{})) : m_char_allocator{} {}
+  inline basic_message_format_base() noexcept(noexcept(char_allocator{}))
+      : m_char_allocator{} {}
 
-  explicit inline basic_message_format_base(char_allocator const &alloc) noexcept(
-      noexcept(char_allocator{}))
+  explicit inline basic_message_format_base(
+      char_allocator const &alloc) noexcept(noexcept(char_allocator{}))
       : m_char_allocator{alloc} {}
 
   constexpr auto &get_char_allocator() const & noexcept {
@@ -237,17 +238,13 @@ struct basic_yaml_message_format final
 
   std_string create_message(message_data const &m) override {
     static constexpr auto get_fmt_chars = []() -> char_t const * {
-      static constexpr auto chars =
-          " - [{}, '{}', '{}', {{'scope_execution_time': {}, 'thread_id': "
-          "{}}}]\n";
-      static constexpr auto wchars =
-          L" - [{}, '{}', '{}', {{'scope_execution_time': {}, 'thread_id': "
-          L"{}}}]\n";
-
       if constexpr (std::is_same_v<char_t, char>)
-        return &chars[0];
+        return " - [{}, '{}', '{}', {{'scope_execution_time': {}, 'thread_id': "
+               "{}}}]\n";
       else
-        return &wchars[0];
+        return L" - [{}, '{}', '{}', {{'scope_execution_time': {}, "
+               L"'thread_id': "
+               L"{}}}]\n";
     };
 
     return basic_format_to<Char, CharTraits, Allocator>(
