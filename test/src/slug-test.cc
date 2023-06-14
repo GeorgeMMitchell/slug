@@ -8,13 +8,13 @@
 #include <iostream>
 
 TEST_CASE("Logger Branching", "[branching]") {
-  auto &&logger = slug::logger{std::clog};
+  [[maybe_unused]] auto &&logger = slug::logger{std::clog};
 
   logger.set_severity(slug::trace);
 
-  auto &&allocator = logger.get_allocator();
-  auto &&severity = logger.get_severity();
-  auto &&start_time = logger.get_start_time();
+  [[maybe_unused]] auto &&allocator = logger.get_allocator();
+  [[maybe_unused]] auto &&severity = logger.get_severity();
+  [[maybe_unused]] auto &&start_time = logger.get_start_time();
 
   logger.open_file("slug-test.log");
   logger.log(slug::trace, "Writing message to file");
@@ -24,13 +24,13 @@ TEST_CASE("Logger Branching", "[branching]") {
 }
 
 TEST_CASE("Wide Logger Branching", "[branching]") {
-  auto &&wlogger = slug::wlogger{std::wclog};
+  [[maybe_unused]] auto &&wlogger = slug::wlogger{std::wclog};
 
   wlogger.set_severity(slug::trace);
 
-  auto &&allocator = wlogger.get_allocator();
-  auto &&severity = wlogger.get_severity();
-  auto &&start_time = wlogger.get_start_time();
+  [[maybe_unused]] auto &&allocator = wlogger.get_allocator();
+  [[maybe_unused]] auto &&severity = wlogger.get_severity();
+  [[maybe_unused]] auto &&start_time = wlogger.get_start_time();
 
   wlogger.open_file("wslug-test.log");
   wlogger.log(slug::trace, L"Writing wide message to file");
