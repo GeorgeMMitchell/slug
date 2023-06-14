@@ -70,7 +70,7 @@ TEST_CASE("Wide Global Macro", "[globals]") {
   static_assert(SLUG_W_GLOBAL,
                 "Enable slug's wide character global logging instance");
 
-  // SLUG_W_SET_SEVERITY(slug::trace);
+  SLUG_W_SET_SEVERITY(slug::trace);
 
   // SLUG_W_LOG(slug::trace, L"Test {} message from global logging instance",
   //            "console");
