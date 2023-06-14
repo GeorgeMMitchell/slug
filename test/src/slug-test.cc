@@ -4,6 +4,7 @@
 #include <slug/log.h>
 
 #include <catch2/catch_all.hpp>
+
 #include <iostream>
 
 TEST_CASE("Logger Branching", "[branching]") {
