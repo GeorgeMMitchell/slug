@@ -33,7 +33,7 @@
 #include <utility>
 
 #define SLUG_VERSION_MAJOR 0
-#define SLUG_VERSION_MINOR 1
+#define SLUG_VERSION_MINOR 0
 #define SLUG_VERSION_PATCH 0
 
 #ifndef SLUG_HEADER_ONLY
