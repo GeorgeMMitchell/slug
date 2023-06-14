@@ -12,8 +12,6 @@ if(NOT Catch2_FOUND)
   FetchContent_MakeAvailable(Catch2)
 endif()
 
-target_compile_definitions(slug PUBLIC SLUG_GLOBAL SLUG_W_GLOBAL)
-
 add_executable(slug-test ${SLUG_PROJECT_DIR}/test/src/slug-test.cc)
 
 target_link_libraries(slug-test PRIVATE slug Catch2::Catch2WithMain)

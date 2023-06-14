@@ -50,10 +50,9 @@ TEST_CASE("Wide Logger Branching", "[branching]") {
   wlogger.log(slug::trace, L"Writing wide message to console");
 }
 
-TEST_CASE("Global Macros", "[slug.globals]") {
-  static_assert(SLUG_GLOBAL && SLUG_W_GLOBAL,
-                "Both slug-test must be compiled with both native and wide "
-                "character global logging instances");
+TEST_CASE("Native Global Macro", "[slug.globals]") {
+  static_assert(SLUG_GLOBAL,
+                "Enable slug's global logging instance (-DSLUG_GLOBAL=ON)");
 
   SLUG_SET_SEVERITY(slug::trace);
 
@@ -65,15 +64,22 @@ TEST_CASE("Global Macros", "[slug.globals]") {
   SLUG_LOG(slug::trace, "Test {} message from global logging instance", "file");
 
   SLUG_OPEN_CONSOLE(std::clog);
+}
+
+//TEST_CASE("Wide Global Macro", "[slug.globals]") {
+//  static_assert(SLUG_W_GLOBAL,
+//                "Enable slug's wide character global logging instance "
+//                "(-DSLUG_WIDECHAR_GLOBAL=ON)");
 
 //  SLUG_W_SET_SEVERITY(slug::trace);
 
 //  SLUG_W_LOG(slug::trace, L"Test {} message from global logging instance",
-//           "console");
+//             "console");
 
 //  SLUG_W_OPEN_FILE(slug::test::config::out_filename, std::ios::app);
 
-//  SLUG_W_LOG(slug::trace, L"Test {} message from global logging instance", L"file");
+//  SLUG_W_LOG(slug::trace, L"Test {} message from global logging instance",
+//             L"file");
 
 //  SLUG_W_OPEN_CONSOLE(std::wclog);
-}
+//}
