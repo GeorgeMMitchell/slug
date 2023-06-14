@@ -91,9 +91,9 @@ static constexpr auto default_severity =
 
 template <typename Char, typename CharTraits,
           template <typename> typename Allocator, typename... Args>
-[[nodiscard]] static auto basic_format_to(Allocator<Char> const &alloc,
-                            std::basic_string_view<Char, CharTraits> fmt,
-                            Args &&...args) {
+[[nodiscard]] static auto basic_format_to(
+    Allocator<Char> const &alloc, std::basic_string_view<Char, CharTraits> fmt,
+    Args &&...args) {
   using std_string = std::basic_string<Char, CharTraits, Allocator<Char>>;
   using fmt_membuf =
       fmt::basic_memory_buffer<Char, fmt::inline_buffer_size, Allocator<Char>>;
@@ -323,7 +323,8 @@ struct basic_logger final {
         m_char_allocator{alloc} {}
 
   explicit basic_logger(std::filesystem::path const &path,
-                        logger_config cfg = {})
+                        logger_config cfg = {},
+                        char_allocator const &alloc = {})
       : m_sink{sink::make_shared_sink(path, cfg.openmode, cfg.message_format)},
         m_logger_config{cfg},
         m_char_allocator{alloc} {}
@@ -342,7 +343,8 @@ struct basic_logger final {
   basic_logger &operator=(basic_logger &&) = delete;
 
   template <typename... Args>
-  [[maybe_unused]] auto log(severity_t severity, std_string_view fmt, Args &&...args) {
+  [[maybe_unused]] auto log(severity_t severity, std_string_view fmt,
+                            Args &&...args) {
     if (m_logger_config.severity < severity) {
       return emitter{message_data{m_char_allocator}};
     }
