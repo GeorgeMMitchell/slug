@@ -55,22 +55,22 @@ using program_execution_duration = seconds;
 using scope_execution_duration = microseconds;
 
 template <typename Duration>
-constexpr auto to_seconds(Duration &&dur) noexcept {
+[[nodiscard]] constexpr auto to_seconds(Duration &&dur) noexcept {
   return std::chrono::duration_cast<seconds>(std::forward<Duration>(dur));
 }
 
 template <typename Duration>
-constexpr auto to_milliseconds(Duration &&dur) noexcept {
+[[nodiscard]] constexpr auto to_milliseconds(Duration &&dur) noexcept {
   return std::chrono::duration_cast<milliseconds>(std::forward<Duration>(dur));
 }
 
 template <typename Duration>
-constexpr auto to_microseconds(Duration &&dur) noexcept {
+[[nodiscard]] constexpr auto to_microseconds(Duration &&dur) noexcept {
   return std::chrono::duration_cast<microseconds>(std::forward<Duration>(dur));
 }
 
 template <typename Duration>
-constexpr auto to_nanoseconds(Duration &&dur) noexcept {
+[[nodiscard]] constexpr auto to_nanoseconds(Duration &&dur) noexcept {
   return std::chrono::duration_cast<nanoseconds>(std::forward<Duration>(dur));
 }
 
@@ -91,7 +91,7 @@ static constexpr auto default_severity =
 
 template <typename Char, typename CharTraits,
           template <typename> typename Allocator, typename... Args>
-static auto basic_format_to(Allocator<Char> const &alloc,
+[[nodiscard]] static auto basic_format_to(Allocator<Char> const &alloc,
                             std::basic_string_view<Char, CharTraits> fmt,
                             Args &&...args) {
   using std_string = std::basic_string<Char, CharTraits, Allocator<Char>>;
@@ -175,9 +175,9 @@ struct basic_message_format_base {
   using std_string = std::basic_string<char_t, char_traits, char_allocator>;
   using std_string_view = std::basic_string_view<char_t, char_traits>;
 
-  virtual std_string create_message(message_data const &) = 0;
-  virtual std_string create_header_message() = 0;
-  virtual std_string create_footer_message() = 0;
+  [[nodiscard]] virtual std_string create_message(message_data const &) = 0;
+  [[nodiscard]] virtual std_string create_header_message() = 0;
+  [[nodiscard]] virtual std_string create_footer_message() = 0;
 
   virtual ~basic_message_format_base() {}
 
@@ -186,11 +186,11 @@ struct basic_message_format_base {
   explicit basic_message_format_base(char_allocator const &alloc) noexcept
       : m_char_allocator{alloc} {}
 
-  constexpr auto &get_char_allocator() const & noexcept {
+  [[nodiscard]] constexpr auto &get_char_allocator() const & noexcept {
     return m_char_allocator;
   }
 
-  constexpr std_string_view get_severity_literal(
+  [[nodiscard]] constexpr std_string_view get_severity_literal(
       severity_t sev) const noexcept {
     return severity_literals::to_string_view(sev);
   }
@@ -202,7 +202,7 @@ struct basic_message_format_base {
     using char_t = Char;
     using char_traits = CharTraits;
 
-    static constexpr std_string_view to_string_view(
+    [[nodiscard]] static constexpr std_string_view to_string_view(
         severity_t severity) noexcept {
       switch (severity) {
         case fatal:
@@ -246,7 +246,7 @@ struct basic_yaml_message_format final
   explicit basic_yaml_message_format(char_allocator const &alloc) noexcept
       : message_format_base{alloc} {}
 
-  std_string create_message(message_data const &m) override {
+  [[nodiscard]] std_string create_message(message_data const &m) override {
     static constexpr auto get_fmt_chars = []() -> char_t const * {
       if constexpr (std::is_same_v<char_t, char>)
         return " - [{}, '{}', '{}', {{'scope_execution_time': {}, 'thread_id': "
@@ -264,12 +264,12 @@ struct basic_yaml_message_format final
         m.scope_execution_time().count(), m.thread_id());
   }
 
-  std_string create_header_message() override {
+  [[nodiscard]] std_string create_header_message() override {
     static constexpr char_t chars[] = {'-', '-', '-', '\n', 0};
     return std_string{&chars[0], message_format_base::get_char_allocator()};
   }
 
-  std_string create_footer_message() override {
+  [[nodiscard]] std_string create_footer_message() override {
     static constexpr char_t chars[] = {'.', '.', '.', '\n', 0};
     return std_string{&chars[0], message_format_base::get_char_allocator()};
   }
