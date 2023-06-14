@@ -379,26 +379,27 @@ struct basic_logger final {
     void print_message(message_data const &msgdata) {
       print_header_message();
 
+      static_cast<void>(std_scoped_lock{m_sink_mutex});
+
       if (m_ostream && m_format) {
-        static_cast<void>(std_scoped_lock{m_sink_mutex});
         m_ostream->print_value(m_format->create_message(msgdata));
       }
     }
 
     void print_header_message() {
-      if (m_ostream && m_format && !m_first_message_printed) {
-        static_cast<void>(std_scoped_lock{m_sink_mutex});
+      static_cast<void>(std_scoped_lock{m_sink_mutex});
 
+      if (m_ostream && m_format && !m_first_message_printed) {
         m_ostream->print_value(m_format->create_header_message());
         m_first_message_printed = true;
       }
     }
 
     void print_footer_message() {
+      static_cast<void>(std_scoped_lock{m_sink_mutex});
+
       if (m_ostream && m_format && m_first_message_printed &&
           !m_last_message_printed) {
-        static_cast<void>(std_scoped_lock{m_sink_mutex});
-
         m_ostream->print_value(m_format->create_footer_message());
         m_last_message_printed = true;
       }
@@ -416,9 +417,9 @@ struct basic_logger final {
 
     void set_ostream(std::filesystem::path const &path,
                      std::ios::openmode mode) {
-      static_cast<void>(std_scoped_lock{m_sink_mutex});
-
       print_footer_message();
+
+      static_cast<void>(std_scoped_lock{m_sink_mutex});
 
       m_ostream = ostream::make_shared_ostream(path, mode);
       m_last_message_printed = false;
