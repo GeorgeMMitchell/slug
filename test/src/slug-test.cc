@@ -72,13 +72,13 @@ TEST_CASE("Wide Global Macro", "[globals]") {
 
   SLUG_W_SET_SEVERITY(slug::trace);
 
-  // SLUG_W_LOG(slug::trace, L"Test {} message from global logging instance",
-  //            "console");
+  SLUG_W_LOG(slug::trace, L"Test {} message from global logging instance",
+             L"console");
 
-  // SLUG_W_OPEN_FILE(slug::test::config::out_filename, std::ios::app);
+  SLUG_W_OPEN_FILE(slug::test::config::out_filename, std::ios::app);
 
-  // SLUG_W_LOG(slug::trace, L"Test {} message from global logging instance",
-  //            L"file");
+  SLUG_W_LOG(slug::trace, L"Test {} message from global logging instance",
+             L"file");
 
-  // SLUG_W_OPEN_CONSOLE(std::wclog);
+  SLUG_W_OPEN_CONSOLE(std::wclog);
 }
