@@ -98,7 +98,7 @@ static auto basic_format_to(Allocator<Char> const &alloc,
   using fmt_membuf =
       fmt::basic_memory_buffer<Char, fmt::inline_buffer_size, Allocator<Char>>;
 
-  auto&& make_fmtargs = [](auto &&...t_args) {
+  auto &&make_fmtargs = [](auto &&...t_args) {
     if constexpr (std::is_same_v<Char, char>) {
       return fmt::make_format_args(t_args...);
     } else {
@@ -106,7 +106,7 @@ static auto basic_format_to(Allocator<Char> const &alloc,
     }
   };
 
-  auto&& make_string = [&alloc, fmt](auto &&t_fmtargs) -> std_string {
+  auto &&make_string = [&alloc, fmt](auto &&t_fmtargs) -> std_string {
     auto &&membuf = fmt_membuf{alloc};
 
     fmt::vformat_to(std::back_inserter(membuf), fmt, t_fmtargs);
