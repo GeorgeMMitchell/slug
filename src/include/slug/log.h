@@ -486,7 +486,7 @@ struct basic_logger final {
     bool m_first_message_printed = false;
     bool m_last_message_printed = false;
 
-    std::mutex mutable m_sink_mutex;
+    std::mutex mutable m_sink_mutex{};
 
   };  // sink
 
