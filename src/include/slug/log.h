@@ -176,7 +176,9 @@ struct basic_message_format_base {
   using std_string_view = std::basic_string_view<char_t, char_traits>;
 
   [[nodiscard]] virtual std_string create_message(message_data const &) = 0;
+
   [[nodiscard]] virtual std_string create_header_message() = 0;
+
   [[nodiscard]] virtual std_string create_footer_message() = 0;
 
   virtual ~basic_message_format_base() {}
