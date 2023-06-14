@@ -1,5 +1,16 @@
 // Copyright (c) 2023, George Mitchell
-// See License.txt for license information
+
+// Permission to use, copy, modify, and/or distribute this software for any
+// purpose with or without fee is hereby granted, provided that the above
+// copyright notice and this permission notice appear in all copies.
+
+// THE SOFTWARE IS PROVIDED “AS IS” AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+// REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+// AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+// INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+// LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+// OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+// PERFORMANCE OF THIS SOFTWARE.
 
 #ifndef SLUG_H_LOG
 #define SLUG_H_LOG
@@ -117,9 +128,9 @@ struct basic_message_data final {
   explicit basic_message_data(char_allocator const &alloc) : m_string{alloc} {}
 
   template <typename StrT>
-  explicit basic_message_data(
-      StrT &&str, severity_t severity, chrono::clock_time_point start,
-      char_allocator const &alloc) noexcept(noexcept(char_allocator{}))
+  explicit basic_message_data(StrT &&str, severity_t severity,
+                              chrono::clock_time_point start,
+                              char_allocator const &alloc)
       : m_string{std::forward<StrT>(str), alloc},
         m_severity{severity},
         m_start_time{start},
@@ -169,11 +180,9 @@ struct basic_message_format_base {
 
   virtual ~basic_message_format_base() {}
 
-  basic_message_format_base() noexcept(noexcept(char_allocator{}))
-      : m_char_allocator{} {}
+  basic_message_format_base() noexcept : m_char_allocator{} {}
 
-  explicit basic_message_format_base(
-      char_allocator const &alloc) noexcept(noexcept(char_allocator{}))
+  explicit basic_message_format_base(char_allocator const &alloc) noexcept
       : m_char_allocator{alloc} {}
 
   constexpr auto &get_char_allocator() const & noexcept {
@@ -233,7 +242,7 @@ struct basic_yaml_message_format final
       basic_message_format_base<Char, CharTraits, Allocator>;
   using std_string = std::basic_string<char_t, char_traits, char_allocator>;
 
-  explicit basic_yaml_message_format(char_allocator const &alloc) noexcept(noexcept(char_allocator{}))
+  explicit basic_yaml_message_format(char_allocator const &alloc) noexcept
       : message_format_base{alloc} {}
 
   std_string create_message(message_data const &m) override {
