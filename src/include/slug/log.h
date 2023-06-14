@@ -113,8 +113,7 @@ static auto basic_format_to(Allocator<Char> const &alloc,
 
     return std_string{membuf.data(), membuf.size(), alloc};
   }(fmtargs);
-
-}  // basic_format_to
+}
 
 template <typename Char, typename CharTraits,
           template <typename> typename Allocator>
@@ -272,6 +271,7 @@ struct basic_yaml_message_format final
     static constexpr char_t chars[] = {'.', '.', '.', '\n', 0};
     return std_string{&chars[0], message_format_base::get_char_allocator()};
   }
+
 };  // basic_yaml_message_format
 
 template <typename Char, typename CharTraits,
