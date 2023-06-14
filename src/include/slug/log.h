@@ -36,6 +36,18 @@
 #define SLUG_VERSION_MINOR 1
 #define SLUG_VERSION_PATCH 0
 
+#ifndef SLUG_HEADER_ONLY
+#define SLUG_HEADER_ONLY 0
+#endif
+
+#ifndef SLUG_GLOBAL
+#define SLUG_GLOBAL 0
+#endif
+
+#ifndef SLUG_W_GLOBAL
+#define SLUG_W_GLOBAL 0
+#endif
+
 namespace slug {
 
 namespace chrono {
@@ -562,7 +574,7 @@ extern wlogger g_wlogger;
 
 }  // namespace slug
 
-#ifdef SLUG_GLOBAL
+#if SLUG_GLOBAL && !SLUG_HEADER_ONLY
 
 #define SLUG_LOG(severity, msg, ...) \
   slug::detail::g_logger.log(severity, msg, __VA_ARGS__)
@@ -584,7 +596,7 @@ extern wlogger g_wlogger;
 
 #endif  // SLUG_GLOBAL
 
-#ifdef SLUG_W_GLOBAL
+#if SLUG_W_GLOBAL && !SLUG_HEADER_ONLY
 
 #define SLUG_W_LOG(severity, msg, ...) \
   slug::detail::g_wlogger.log(severity, msg, __VA_ARGS__)
