@@ -1,5 +1,4 @@
-# Copyright (c) 2023, George Mitchell
-# See License.txt for license information
+# Copyright (c) 2023, George Mitchell See License.txt for license information
 
 include(CTest)
 
@@ -18,17 +17,14 @@ target_link_libraries(slug-test PRIVATE slug Catch2::Catch2WithMain)
 
 target_compile_options(
   slug-test
-  PRIVATE
-    $<$<CXX_COMPILER_ID:Clang>:
-      -Wall
-      -Wextra>
-
-    $<$<CXX_COMPILER_ID:GNU>:
-      -Wall
-      -Wextra>
-
-    $<$<CXX_COMPILER_ID:MSVC>:
-      /W4
-      /utf-8>)
+  PRIVATE $<$<CXX_COMPILER_ID:Clang>:
+          -Wall
+          -Wextra>
+          $<$<CXX_COMPILER_ID:GNU>:
+          -Wall
+          -Wextra>
+          $<$<CXX_COMPILER_ID:MSVC>:
+          /W4
+          /utf-8>)
 
 add_test(NAME slug-test COMMAND slug-test)

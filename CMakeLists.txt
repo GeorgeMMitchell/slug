@@ -1,5 +1,4 @@
-# Copyright (c) 2023, George Mitchell
-# See License.txt for license information
+# Copyright (c) 2023, George Mitchell See License.txt for license information
 
 cmake_minimum_required(VERSION 3.12...3.26)
 
@@ -147,7 +146,8 @@ target_link_libraries(slug-header-only INTERFACE fmt::fmt-header-only)
 target_include_directories(slug-header-only
                            INTERFACE ${SLUG_PROJECT_DIR}/src/include)
 target_compile_definitions(
-  slug-header-only INTERFACE $<$<CONFIG:Debug,RelWithDebInfo>:SLUG_DEBUG> SLUG_HEADER_ONLY)
+  slug-header-only INTERFACE $<$<CONFIG:Debug,RelWithDebInfo>:SLUG_DEBUG>
+                             SLUG_HEADER_ONLY)
 
 if(SLUG_ROOT_PROJECT OR BUILD_TESTING)
   add_subdirectory(test)
