@@ -5,14 +5,10 @@
 
 #include <iostream>
 
-namespace slug::detail {
-
-#ifdef SLUG_GLOBAL
-inline logger g_logger{std::clog};
+#if SLUG_GLOBAL
+inline auto slug::detail::g_logger = slug::logger{std::clog};
 #endif
 
-#ifdef SLUG_WIDECHAR_GLOBAL
-inline wlogger g_wlogger{std::wclog};
+#if SLUG_W_GLOBAL
+inline auto slug::detail::g_wlogger = slug::wlogger{std::wclog};
 #endif
-
-}  // namespace slug::detail
