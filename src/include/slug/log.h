@@ -34,10 +34,6 @@
 #include <type_traits>
 #include <utility>
 
-#define SLUG_VERSION_MAJOR 0
-#define SLUG_VERSION_MINOR 0
-#define SLUG_VERSION_PATCH 0
-
 #ifndef SLUG_HEADER_ONLY
 #define SLUG_HEADER_ONLY 0
 #endif
@@ -49,6 +45,10 @@
 #ifndef SLUG_W_GLOBAL
 #define SLUG_W_GLOBAL 0
 #endif
+
+#define SLUG_VERSION_MAJOR 0
+#define SLUG_VERSION_MINOR 0
+#define SLUG_VERSION_PATCH 0
 
 namespace slug {
 
