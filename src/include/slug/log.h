@@ -46,6 +46,10 @@
 #define SLUG_W_GLOBAL 0
 #endif
 
+#ifndef SLUG_DEBUG
+#define SLUG_DEBUG 0
+#endif
+
 #define SLUG_VERSION_MAJOR 0
 #define SLUG_VERSION_MINOR 0
 #define SLUG_VERSION_PATCH 0
@@ -97,7 +101,7 @@ static constexpr auto fatal = severity_t::Fatal, error = severity_t::Error,
                       trace = severity_t::Trace;
 
 static constexpr auto default_severity =
-#ifdef SLUG_DEBUG
+#if SLUG_DEBUG
     debug;
 #else
     warning;
