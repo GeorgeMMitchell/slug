@@ -1,5 +1,5 @@
-// Copyright (c) 2023, George Mitchell
-// Refer to License.txt for license information
+// Copyright (c) 2023 - present George Mitchell
+// See License.txt for license information
 
 #include <slug/log.h>
 
