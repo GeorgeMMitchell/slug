@@ -15,7 +15,9 @@
 #ifndef SLUG_LOG_H_
 #define SLUG_LOG_H_
 
+#include <fmt/core.h>
 #include <fmt/format.h>
+#include <fmt/ostream.h>
 #include <fmt/std.h>
 #include <fmt/xchar.h>
 
