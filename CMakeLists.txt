@@ -78,7 +78,7 @@ set(CPACK_SOURCE_IGNORE_FILES
 option(SLUG_GLOBAL "Enable Slug's global logging object" ON)
 option(SLUG_FMT_HEADERONLY "Consume fmtlib as a header-only library" OFF)
 option(SLUG_WIDECHAR_GLOBAL
-       "Enable Slug's global wide character logging object" OFF)
+       "Enable Slug's global wide character logging object" ON)
 option(SLUG_DOC "Build the documentation" OFF)
 set(SLUG_DEBUG_POSTFIX
     d
