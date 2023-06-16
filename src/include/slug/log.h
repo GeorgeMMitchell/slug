@@ -138,17 +138,15 @@ template <typename Char, typename CharTraits,
     }
   };
 
-  auto &&make_string = [&alloc, fmt](auto &&t_fmtargs) {
-    auto &&membuf = fmt::basic_memory_buffer<Char, fmt::inline_buffer_size,
-                                             Allocator<Char>>{alloc};
+  auto &&fmtargs = make_fmtargs(args...);
+  auto &&membuf =
+      fmt::basic_memory_buffer<Char, fmt::inline_buffer_size, Allocator<Char>>{
+          alloc};
 
-    fmt::vformat_to(std::back_inserter(membuf), fmt, t_fmtargs);
+  fmt::vformat_to(std::back_inserter(membuf), fmt, fmtargs);
 
-    return std::basic_string<Char, CharTraits, Allocator<Char>>{
-        membuf.data(), membuf.size(), alloc};
-  };
-
-  return make_string(make_fmtargs(args...));
+  return std::basic_string<Char, CharTraits, Allocator<Char>>{
+      membuf.data(), membuf.size(), alloc};
 }
 
 /// @brief Log message contents
