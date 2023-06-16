@@ -80,6 +80,8 @@ option(SLUG_FMT_HEADERONLY "Consume fmtlib as a header-only library" OFF)
 option(SLUG_WIDECHAR_GLOBAL
        "Enable Slug's global wide character logging object" ON)
 option(SLUG_DOC "Build the documentation" OFF)
+option(SLUG_TEST "Build the test executable" OFF)
+
 set(SLUG_DEBUG_POSTFIX
     d
     CACHE STRING "Slug's debug library filename postfix")
@@ -133,7 +135,9 @@ target_compile_definitions(
   slug-header-only INTERFACE $<$<CONFIG:Debug,RelWithDebInfo>:SLUG_DEBUG>
                              SLUG_HEADER_ONLY)
 
-if(SLUG_ROOT_PROJECT OR BUILD_TESTING)
+if(SLUG_ROOT_PROJECT
+   OR SLUG_TEST
+   OR BUILD_TESTING)
   add_subdirectory(test)
 endif()
 
