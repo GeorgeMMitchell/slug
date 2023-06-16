@@ -596,7 +596,7 @@ struct basic_logger final {
 
   std_shared_sink_t m_sink;
   std::atomic<severity_t> m_atm_severity;
-  char_allocator_t m_char_allocator{};
+  char_allocator_t m_char_allocator;
 
   chrono::clock_time_point const m_start_time{chrono::clock_type::now()};
 
