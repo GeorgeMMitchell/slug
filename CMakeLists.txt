@@ -84,10 +84,6 @@ set(SLUG_DEBUG_POSTFIX
     d
     CACHE STRING "Slug's debug library filename postfix")
 
-if(SLUG_ROOT_PROJECT OR SLUG_DOC)
-  add_subdirectory(doc)
-endif()
-
 find_package(fmt QUIET)
 if(NOT fmt_FOUND)
   FetchContent_Declare(
@@ -139,6 +135,10 @@ target_compile_definitions(
 
 if(SLUG_ROOT_PROJECT OR BUILD_TESTING)
   add_subdirectory(test)
+endif()
+
+if(SLUG_ROOT_PROJECT OR SLUG_DOC)
+  add_subdirectory(doc)
 endif()
 
 install(
