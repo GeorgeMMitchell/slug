@@ -28,6 +28,7 @@
 #include <memory_resource>
 #include <mutex>
 #include <ostream>
+#include <ratio>
 #include <string>
 #include <string_view>
 #include <thread>
@@ -56,10 +57,29 @@
 
 namespace slug {
 
+/// @brief Log message severity level
+enum struct severity_t { Fatal, Error, Warning, Debug, Trace };
+
+static constexpr auto fatal = severity_t::Fatal;
+static constexpr auto error = severity_t::Error;
+static constexpr auto warning = severity_t::Warning;
+static constexpr auto debug = severity_t::Debug;
+static constexpr auto trace = severity_t::Trace;
+
+/// @brief Default log message severity literal
+static constexpr auto default_severity =
+#if SLUG_DEBUG
+    debug;
+#else
+    warning;
+#endif
+
 namespace chrono {
 
 using clock_type = std::chrono::system_clock;
+
 using clock_duration = typename clock_type::duration;
+
 using clock_time_point = typename clock_type::time_point;
 
 using rep = float;
@@ -69,7 +89,10 @@ using milliseconds = std::chrono::duration<rep, std::milli>;
 using microseconds = std::chrono::duration<rep, std::micro>;
 using nanoseconds = std::chrono::duration<rep, std::nano>;
 
+/// @brief Duration type for program execution time
 using program_execution_duration = seconds;
+
+/// @brief Duration type for scope execution time
 using scope_execution_duration = microseconds;
 
 template <typename Duration>
@@ -94,19 +117,14 @@ template <typename Duration>
 
 }  // namespace chrono
 
-enum struct severity_t { Fatal, Error, Warning, Debug, Trace };
-
-static constexpr auto fatal = severity_t::Fatal, error = severity_t::Error,
-                      warning = severity_t::Warning, debug = severity_t::Debug,
-                      trace = severity_t::Trace;
-
-static constexpr auto default_severity =
-#if SLUG_DEBUG
-    debug;
-#else
-    warning;
-#endif
-
+/// @brief Generic allocator-aware fmt::vformat_to wrapper
+/// @tparam Char Character type
+/// @tparam CharTraits Character type traits
+/// @tparam ...Args fmt::format_args parameter pack
+/// @param alloc Allocator instance
+/// @param fmt format string
+/// @param ...args fmt::format_args function parameter pack
+/// @return std::basic_string<Char, CharTraits, Allocator<Char>>
 template <typename Char, typename CharTraits,
           template <typename> typename Allocator, typename... Args>
 [[nodiscard]] static auto basic_format_to(
@@ -133,6 +151,10 @@ template <typename Char, typename CharTraits,
   return make_string(make_fmtargs(args...));
 }
 
+/// @brief Log message contents
+/// @tparam Char Character type
+/// @tparam CharTraits Character type traits
+/// @tparam Allocator Allocator type
 template <typename Char, typename CharTraits,
           template <typename> typename Allocator>
 struct basic_message_data final {
@@ -183,6 +205,10 @@ struct basic_message_data final {
 
 };  // basic_message_data
 
+/// @brief Message format interface
+/// @tparam Char Character type
+/// @tparam CharTraits Character type traits
+/// @tparam Allocator Allocator type
 template <typename Char, typename CharTraits,
           template <typename> typename Allocator>
 struct basic_message_format_base {
@@ -197,10 +223,18 @@ struct basic_message_format_base {
 
   using std_string_t = typename message_data_t::std_string_t;
 
-  [[nodiscard]] virtual std_string_t create_message(message_data_t const &) = 0;
+  /// @brief Creates log message string
+  /// @param message_data Log message contents to stringify
+  /// @returns std::string
+  [[nodiscard]] virtual std_string_t create_message(
+      message_data_t const &message_data) = 0;
 
+  /// @brief Creates log message header string
+  /// @returns std::string
   [[nodiscard]] virtual std_string_t create_header_message() = 0;
 
+  /// @brief Creates log message footer string
+  /// @returns std::string
   [[nodiscard]] virtual std_string_t create_footer_message() = 0;
 
   virtual ~basic_message_format_base() {}
@@ -222,6 +256,7 @@ struct basic_message_format_base {
  private:
   char_allocator_t const m_char_allocator;
 
+  /// @brief Severity string literals
   struct severity_literals final {
     [[nodiscard]] static constexpr std_string_view_t to_string_view(
         severity_t severity) noexcept {
@@ -252,6 +287,7 @@ struct basic_message_format_base {
 
 };    // basic_message_format_base
 
+/// @brief YAML message formatter
 template <typename Char, typename CharTraits,
           template <typename> typename Allocator>
 struct basic_yaml_message_format final
@@ -303,6 +339,10 @@ struct basic_yaml_message_format final
 
 };  // basic_yaml_message_format
 
+/// @brief Logger config
+/// @tparam Char Character type
+/// @tparam CharTraits Character type traits
+/// @tparam Allocator Allocator type
 template <typename Char, typename CharTraits,
           template <typename> typename Allocator>
 struct basic_logger_config final {
@@ -333,6 +373,10 @@ struct basic_logger_config final {
 
 };  // basic_logger_config
 
+/// @brief Sends formatted messages to a sink
+/// @tparam Char Character type
+/// @tparam CharTraits Character type traits
+/// @tparam Allocator Allocator type
 template <typename Char, typename CharTraits,
           template <typename> typename Allocator>
 struct basic_logger final {
@@ -418,6 +462,7 @@ struct basic_logger final {
     return m_start_time;
   }
 
+  /// @brief Formats message data and prints the data to a given ostream
   struct sink final {
     sink() = default;
 
@@ -493,6 +538,7 @@ struct basic_logger final {
       m_first_message_printed = false;
     }
 
+    /// @brief Wraps console and file streams
     struct ostream final : public std_ostream_t {
       using std_filebuf = std::basic_filebuf<char_t, char_traits_t>;
 
@@ -554,6 +600,7 @@ struct basic_logger final {
 
   chrono::clock_time_point const m_start_time{chrono::clock_type::now()};
 
+  /// @brief Emits a message at the end of its scope
   struct emitter final {
     emitter() = default;
 
