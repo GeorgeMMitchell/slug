@@ -403,18 +403,18 @@ struct basic_logger final {
 
   explicit basic_logger(std_ostream_t &os, logger_config_t cfg = {})
       : m_sink{sink::make_shared_sink(os, cfg.message_format)},
-        m_severity{cfg.severity},
+        m_atm_severity{cfg.severity},
         m_char_allocator{cfg.char_allocator} {}
 
   explicit basic_logger(std::filesystem::path const &path,
                         logger_config_t cfg = {})
       : m_sink{sink::make_shared_sink(path, cfg.openmode, cfg.message_format)},
-        m_severity{cfg.severity},
+        m_atm_severity{cfg.severity},
         m_char_allocator{cfg.char_allocator_t} {}
 
   basic_logger(basic_logger &&l) noexcept
       : m_sink{std::move(l.m_sink)},
-        m_severity{std::move(m_severity)},
+        m_atm_severity{std::move(m_atm_severity)},
         m_char_allocator{std::move(l.m_char_allocator)} {}
 
   ~basic_logger() { m_sink->print_footer_message(); }
@@ -428,7 +428,7 @@ struct basic_logger final {
   template <typename... Args>
   [[maybe_unused]] auto log(severity_t severity, std_string_view_t fmt,
                             Args &&...args) {
-    if (m_severity < severity) {
+    if (m_atm_severity.load() < severity) {
       return emitter{message_data_t{m_char_allocator}};
     }
 
@@ -448,13 +448,15 @@ struct basic_logger final {
 
   void open_console(std_ostream_t &os) { m_sink->set_ostream(os); }
 
-  void set_severity(severity_t severity) noexcept { m_severity = severity; }
+  void set_severity(severity_t severity) noexcept {
+    m_atm_severity.store(severity);
+  }
 
   [[nodiscard]] constexpr auto &get_allocator() const & noexcept {
     return m_char_allocator;
   }
   [[nodiscard]] constexpr auto get_severity() const noexcept {
-    return m_severity;
+    return m_atm_severity.load();
   }
   [[nodiscard]] constexpr auto get_start_time() const noexcept {
     return m_start_time;
@@ -593,7 +595,7 @@ struct basic_logger final {
   using std_shared_sink_t = std::shared_ptr<sink>;
 
   std_shared_sink_t m_sink;
-  severity_t m_severity;
+  std::atomic<severity_t> m_atm_severity;
   char_allocator_t m_char_allocator{};
 
   chrono::clock_time_point const m_start_time{chrono::clock_type::now()};
