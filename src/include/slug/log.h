@@ -57,23 +57,6 @@
 
 namespace slug {
 
-/// @brief Log message severity level
-enum struct severity_t { Fatal, Error, Warning, Debug, Trace };
-
-static constexpr auto fatal = severity_t::Fatal;
-static constexpr auto error = severity_t::Error;
-static constexpr auto warning = severity_t::Warning;
-static constexpr auto debug = severity_t::Debug;
-static constexpr auto trace = severity_t::Trace;
-
-/// @brief Default log message severity literal
-static constexpr auto default_severity =
-#if SLUG_DEBUG
-    debug;
-#else
-    warning;
-#endif
-
 namespace slug_chrono {
 
 using clock_type = std::chrono::system_clock;
@@ -117,6 +100,8 @@ template <typename Duration>
 
 }  // namespace slug_chrono
 
+namespace slug_fmt {
+
 /// @brief Generic allocator-aware fmt::vformat_to wrapper
 /// @tparam Char Character type
 /// @tparam CharTraits Character type traits
@@ -148,6 +133,13 @@ template <typename Char, typename CharTraits,
   return std::basic_string<Char, CharTraits, Allocator<Char>>{
       membuf.data(), membuf.size(), alloc};
 }
+
+}  // namespace slug_fmt
+
+namespace slug_message {
+
+/// @brief Log message severity level
+enum struct severity_t { Fatal, Error, Warning, Debug, Trace };
 
 /// @brief Log message contents
 /// @tparam Char Character type
@@ -257,17 +249,17 @@ struct basic_message_format_base {
   /// @brief Severity string literals
   struct severity_literals final {
     [[nodiscard]] static constexpr std_string_view_t to_string_view(
-        severity_t severity) noexcept {
+        slug_message::severity_t severity) noexcept {
       switch (severity) {
-        case fatal:
+        case severity_t::Fatal:
           return &m_fatal_chars[0];
-        case error:
+        case severity_t::Error:
           return &m_error_chars[0];
-        case warning:
+        case severity_t::Warning:
           return &m_warning_chars[0];
-        case debug:
+        case severity_t::Debug:
           return &m_debug_chars[0];
-        case trace:
+        case severity_t::Trace:
           return &m_trace_chars[0];
       }
       return {};
@@ -285,16 +277,19 @@ struct basic_message_format_base {
 
 };    // basic_message_format_base
 
+}  // namespace slug_message
+
 /// @brief YAML message formatter
 template <typename Char, typename CharTraits,
           template <typename> typename Allocator>
 struct basic_yaml_message_format final
-    : public basic_message_format_base<Char, CharTraits, Allocator> {
+    : public slug_message::basic_message_format_base<Char, CharTraits,
+                                                     Allocator> {
   using char_t = Char;
   using char_traits_t = CharTraits;
 
   using message_format_base_t =
-      basic_message_format_base<Char, CharTraits, Allocator>;
+      slug_message::basic_message_format_base<Char, CharTraits, Allocator>;
 
   using message_data_t = typename message_format_base_t::message_data_t;
   using char_allocator_t = typename message_format_base_t::char_allocator_t;
@@ -317,7 +312,7 @@ struct basic_yaml_message_format final
                L"{}}}]\n";
     };
 
-    return basic_format_to<Char, CharTraits, Allocator>(
+    return slug_fmt::basic_format_to<Char, CharTraits, Allocator>(
         message_format_base_t::get_char_allocator(), get_fmt_chars(),
         message_data.program_execution_time().count(),
         message_format_base_t::get_severity_strv(message_data.severity()),
@@ -337,6 +332,20 @@ struct basic_yaml_message_format final
 
 };  // basic_yaml_message_format
 
+static constexpr auto fatal = slug_message::severity_t::Fatal;
+static constexpr auto error = slug_message::severity_t::Error;
+static constexpr auto warning = slug_message::severity_t::Warning;
+static constexpr auto debug = slug_message::severity_t::Debug;
+static constexpr auto trace = slug_message::severity_t::Trace;
+
+/// @brief Default log message severity literal
+static constexpr auto default_severity =
+#if SLUG_DEBUG
+    debug;
+#else
+    warning;
+#endif
+
 /// @brief Logger config
 /// @tparam Char Character type
 /// @tparam CharTraits Character type traits
@@ -354,13 +363,14 @@ struct basic_logger_config final {
       basic_yaml_message_format<char_t, char_traits_t, allocator_t>;
 
   using message_format_base_t =
-      basic_message_format_base<char_t, char_traits_t, allocator_t>;
+      slug_message::basic_message_format_base<char_t, char_traits_t,
+                                              allocator_t>;
 
   using std_string_t = typename message_format_base_t::std_string_t;
 
   using char_allocator_t = typename message_format_base_t::char_allocator_t;
 
-  severity_t severity = default_severity;
+  slug_message::severity_t severity = default_severity;
 
   std::shared_ptr<message_format_base_t> message_format =
       std::make_shared<yaml_message_format_t>(char_allocator_t{});
@@ -426,13 +436,13 @@ struct basic_logger final {
   basic_logger &operator=(basic_logger &&) = delete;
 
   template <typename... Args>
-  [[maybe_unused]] auto log(severity_t severity, std_string_view_t fmt,
-                            Args &&...args) {
+  [[maybe_unused]] auto log(slug_message::severity_t severity,
+                            std_string_view_t fmt, Args &&...args) {
     if (m_atm_severity.load() < severity) {
       return emitter{message_data_t{m_char_allocator}};
     }
 
-    auto &&msgstr = basic_format_to<Char, CharTraits, Allocator>(
+    auto &&msgstr = slug_fmt::basic_format_to<Char, CharTraits, Allocator>(
         m_char_allocator, fmt, args...);
 
     auto &&msgdata = message_data_t{std::move(msgstr), severity, m_start_time,
@@ -448,7 +458,7 @@ struct basic_logger final {
 
   void open_console(std_ostream_t &os) { m_sink->set_ostream(os); }
 
-  void set_severity(severity_t severity) noexcept {
+  void set_severity(slug_message::severity_t severity) noexcept {
     m_atm_severity.store(severity);
   }
 
@@ -595,7 +605,7 @@ struct basic_logger final {
   using std_shared_sink_t = std::shared_ptr<sink>;
 
   std_shared_sink_t m_sink;
-  std::atomic<severity_t> m_atm_severity;
+  std::atomic<slug_message::severity_t> m_atm_severity;
   char_allocator_t m_char_allocator;
 
   slug_chrono::clock_time_point const m_start_time{
