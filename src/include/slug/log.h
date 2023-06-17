@@ -116,11 +116,10 @@ template <typename Char, typename CharTraits,
     Allocator<Char> const &alloc, std::basic_string_view<Char, CharTraits> fmt,
     Args &&...args) {
   auto &&make_fmtargs = [](auto &&...t_args) {
-    if constexpr (std::is_same_v<Char, char>) {
+    if constexpr (std::is_same_v<Char, char>)
       return fmt::make_format_args(t_args...);
-    } else {
+    else
       return fmt::make_wformat_args(t_args...);
-    }
   };
 
   auto &&fmtargs = make_fmtargs(args...);
