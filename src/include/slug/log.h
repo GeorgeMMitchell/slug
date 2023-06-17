@@ -139,30 +139,6 @@ template <typename Char, typename CharTraits,
 enum struct severity_t { Fatal, Error, Warning, Debug, Trace };
 
 /// @brief Severity string literals
-template <typename Char, typename CharTraits>
-[[nodiscard]] constexpr auto to_string_view(severity_t severity) noexcept {
-  using std_string_view = std::basic_string_view<Char, CharTraits>;
-
-  constexpr Char m_fatal_chars[] = {'f', 'a', 't', 'a', 'l', 0};
-  constexpr Char m_error_chars[] = {'e', 'r', 'r', 'o', 'r', 0};
-  constexpr Char m_warning_chars[] = {'w', 'a', 'r', 'n', 'i', 'n', 'g', 0};
-  constexpr Char m_debug_chars[] = {'d', 'e', 'b', 'u', 'g', 0};
-  constexpr Char m_trace_chars[] = {'t', 'r', 'a', 'c', 'e', 0};
-
-  switch (severity) {
-    case severity_t::Fatal:
-      return std_string_view{&m_fatal_chars[0], std::size(m_fatal_chars)};
-    case severity_t::Error:
-      return std_string_view{&m_error_chars[0], std::size(m_error_chars)};
-    case severity_t::Warning:
-      return std_string_view{&m_warning_chars[0], std::size(m_warning_chars)};
-    case severity_t::Debug:
-      return std_string_view{&m_debug_chars[0], std::size(m_debug_chars)};
-    case severity_t::Trace:
-      return std_string_view{&m_trace_chars[0], std::size(m_trace_chars)};
-  }
-  return std_string_view{};
-}
 
 /// @brief Log message contents
 /// @tparam Char Character type
@@ -261,6 +237,29 @@ struct basic_message_format_base {
     return m_char_allocator;
   }
 
+  [[nodiscard]] static constexpr std_string_view_t to_string_view(
+      severity_t severity) noexcept {
+    constexpr Char m_fatal_chars[] = {'f', 'a', 't', 'a', 'l', 0};
+    constexpr Char m_error_chars[] = {'e', 'r', 'r', 'o', 'r', 0};
+    constexpr Char m_warning_chars[] = {'w', 'a', 'r', 'n', 'i', 'n', 'g', 0};
+    constexpr Char m_debug_chars[] = {'d', 'e', 'b', 'u', 'g', 0};
+    constexpr Char m_trace_chars[] = {'t', 'r', 'a', 'c', 'e', 0};
+
+    switch (severity) {
+      case severity_t::Fatal:
+        return {&m_fatal_chars[0], std::size(m_fatal_chars)};
+      case severity_t::Error:
+        return {&m_error_chars[0], std::size(m_error_chars)};
+      case severity_t::Warning:
+        return {&m_warning_chars[0], std::size(m_warning_chars)};
+      case severity_t::Debug:
+        return {&m_debug_chars[0], std::size(m_debug_chars)};
+      case severity_t::Trace:
+        return {&m_trace_chars[0], std::size(m_trace_chars)};
+    }
+    return {};
+  }
+
  private:
   char_allocator_t const m_char_allocator;
 
@@ -290,7 +289,8 @@ struct basic_yaml_message_format final
       override {
     static constexpr auto get_fmt_chars = []() -> char_t const * {
       if constexpr (std::is_same_v<char_t, char>)
-        return " - [{}, '{}', '{}', {{'scope_execution_time': {}, 'thread_id': "
+        return " - [{}, '{}', '{}', {{'scope_execution_time': {}, "
+               "'thread_id': "
                "{}}}]\n";
       else
         return L" - [{}, '{}', '{}', {{'scope_execution_time': {}, "
@@ -301,7 +301,7 @@ struct basic_yaml_message_format final
     return slug_fmt::basic_format_to<Char, CharTraits, Allocator>(
         message_format_base_t::get_char_allocator(), get_fmt_chars(),
         message_data.program_execution_time().count(),
-        to_string_view<Char, CharTraits>(message_data.severity()),
+        message_format_base_t::to_string_view(message_data.severity()),
         message_data.string(), message_data.scope_execution_time().count(),
         message_data.thread_id());
   }
