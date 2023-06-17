@@ -135,15 +135,12 @@ template <typename Char, typename CharTraits,
 
 }  // namespace slug_fmt
 
-namespace slug_message {
-
 /// @brief Log message severity level
 enum struct severity_t { Fatal, Error, Warning, Debug, Trace };
 
 /// @brief Severity string literals
 template <typename Char, typename CharTraits>
-[[nodiscard]] static constexpr auto to_string_view(
-    slug_message::severity_t severity) noexcept {
+[[nodiscard]] constexpr auto to_string_view(severity_t severity) noexcept {
   using std_string_view = std::basic_string_view<Char, CharTraits>;
 
   constexpr Char m_fatal_chars[] = {'f', 'a', 't', 'a', 'l', 0};
@@ -269,19 +266,16 @@ struct basic_message_format_base {
 
 };  // basic_message_format_base
 
-}  // namespace slug_message
-
 /// @brief YAML message formatter
 template <typename Char, typename CharTraits,
           template <typename> typename Allocator>
 struct basic_yaml_message_format final
-    : public slug_message::basic_message_format_base<Char, CharTraits,
-                                                     Allocator> {
+    : public basic_message_format_base<Char, CharTraits, Allocator> {
   using char_t = Char;
   using char_traits_t = CharTraits;
 
   using message_format_base_t =
-      slug_message::basic_message_format_base<Char, CharTraits, Allocator>;
+      basic_message_format_base<Char, CharTraits, Allocator>;
 
   using message_data_t = typename message_format_base_t::message_data_t;
   using char_allocator_t = typename message_format_base_t::char_allocator_t;
@@ -307,7 +301,7 @@ struct basic_yaml_message_format final
     return slug_fmt::basic_format_to<Char, CharTraits, Allocator>(
         message_format_base_t::get_char_allocator(), get_fmt_chars(),
         message_data.program_execution_time().count(),
-        slug_message::to_string_view<Char, CharTraits>(message_data.severity()),
+        to_string_view<Char, CharTraits>(message_data.severity()),
         message_data.string(), message_data.scope_execution_time().count(),
         message_data.thread_id());
   }
@@ -324,11 +318,11 @@ struct basic_yaml_message_format final
 
 };  // basic_yaml_message_format
 
-static constexpr auto fatal = slug_message::severity_t::Fatal;
-static constexpr auto error = slug_message::severity_t::Error;
-static constexpr auto warning = slug_message::severity_t::Warning;
-static constexpr auto debug = slug_message::severity_t::Debug;
-static constexpr auto trace = slug_message::severity_t::Trace;
+static constexpr auto fatal = severity_t::Fatal;
+static constexpr auto error = severity_t::Error;
+static constexpr auto warning = severity_t::Warning;
+static constexpr auto debug = severity_t::Debug;
+static constexpr auto trace = severity_t::Trace;
 
 /// @brief Default log message severity literal
 static constexpr auto default_severity =
@@ -355,14 +349,13 @@ struct basic_logger_config final {
       basic_yaml_message_format<char_t, char_traits_t, allocator_t>;
 
   using message_format_base_t =
-      slug_message::basic_message_format_base<char_t, char_traits_t,
-                                              allocator_t>;
+      basic_message_format_base<char_t, char_traits_t, allocator_t>;
 
   using std_string_t = typename message_format_base_t::std_string_t;
 
   using char_allocator_t = typename message_format_base_t::char_allocator_t;
 
-  slug_message::severity_t severity = default_severity;
+  severity_t severity = default_severity;
 
   std::shared_ptr<message_format_base_t> message_format =
       std::make_shared<yaml_message_format_t>(char_allocator_t{});
@@ -428,8 +421,8 @@ struct basic_logger final {
   basic_logger &operator=(basic_logger &&) = delete;
 
   template <typename... Args>
-  [[maybe_unused]] auto log(slug_message::severity_t severity,
-                            std_string_view_t fmt, Args &&...args) {
+  [[maybe_unused]] auto log(severity_t severity, std_string_view_t fmt,
+                            Args &&...args) {
     if (m_atm_severity.load() < severity) {
       return emitter{message_data_t{m_char_allocator}};
     }
@@ -450,7 +443,7 @@ struct basic_logger final {
 
   void open_console(std_ostream_t &os) { m_sink->set_ostream(os); }
 
-  void set_severity(slug_message::severity_t severity) noexcept {
+  void set_severity(severity_t severity) noexcept {
     m_atm_severity.store(severity);
   }
 
@@ -597,7 +590,7 @@ struct basic_logger final {
   using std_shared_sink_t = std::shared_ptr<sink>;
 
   std_shared_sink_t m_sink;
-  std::atomic<slug_message::severity_t> m_atm_severity;
+  std::atomic<severity_t> m_atm_severity;
   char_allocator_t m_char_allocator;
 
   slug_chrono::clock_time_point const m_start_time{
