@@ -74,7 +74,7 @@ static constexpr auto default_severity =
     warning;
 #endif
 
-namespace chrono {
+namespace slug_chrono {
 
 using clock_type = std::chrono::system_clock;
 
@@ -115,7 +115,7 @@ template <typename Duration>
   return std::chrono::duration_cast<nanoseconds>(std::forward<Duration>(dur));
 }
 
-}  // namespace chrono
+}  // namespace slug_chrono
 
 /// @brief Generic allocator-aware fmt::vformat_to wrapper
 /// @tparam Char Character type
@@ -169,22 +169,22 @@ struct basic_message_data final {
 
   template <typename StrT>
   explicit basic_message_data(StrT &&str, severity_t severity,
-                              chrono::clock_time_point start,
+                              slug_chrono::clock_time_point start,
                               char_allocator_t const &alloc)
       : m_string{std::forward<StrT>(str), alloc},
         m_severity{severity},
         m_start_time{start},
-        m_program_time{chrono::clock_type::now()},
+        m_program_time{slug_chrono::clock_type::now()},
         m_thread_id{std::this_thread::get_id()} {}
 
   [[nodiscard]] constexpr auto program_execution_time() const noexcept
-      -> chrono::program_execution_duration {
+      -> slug_chrono::program_execution_duration {
     return m_program_time - m_start_time;
   }
 
   [[nodiscard]] constexpr auto scope_execution_time() const noexcept
-      -> chrono::scope_execution_duration {
-    return chrono::clock_type::now() - m_program_time;
+      -> slug_chrono::scope_execution_duration {
+    return slug_chrono::clock_type::now() - m_program_time;
   }
 
   [[nodiscard]] constexpr auto &string() const & noexcept { return m_string; }
@@ -197,8 +197,8 @@ struct basic_message_data final {
  protected:
   std_string_t const m_string;
   severity_t const m_severity{};
-  chrono::clock_time_point const m_start_time{};
-  chrono::clock_time_point const m_program_time{};
+  slug_chrono::clock_time_point const m_start_time{};
+  slug_chrono::clock_time_point const m_program_time{};
   std::thread::id const m_thread_id{};
 
 };  // basic_message_data
@@ -598,7 +598,8 @@ struct basic_logger final {
   std::atomic<severity_t> m_atm_severity;
   char_allocator_t m_char_allocator;
 
-  chrono::clock_time_point const m_start_time{chrono::clock_type::now()};
+  slug_chrono::clock_time_point const m_start_time{
+      slug_chrono::clock_type::now()};
 
   /// @brief Emits a message at the end of its scope
   struct emitter final {
