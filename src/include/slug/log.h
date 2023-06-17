@@ -638,17 +638,17 @@ using wlogger = basic_logger<wchar_t, std::char_traits<wchar_t>, allocator>;
 
 }  // namespace pmr
 
-namespace detail {
-
 #if SLUG_GLOBAL
+namespace detail {
 extern logger g_logger;
+}
 #endif
 
 #if SLUG_W_GLOBAL
+namespace detail {
 extern wlogger g_wlogger;
+}
 #endif
-
-}  // namespace detail
 
 }  // namespace slug
 
