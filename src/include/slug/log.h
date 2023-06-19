@@ -427,9 +427,8 @@ struct basic_logger final {
   template <typename... Args>
   [[maybe_unused]] auto log(severity_t severity, std_string_view_t fmt,
                             Args &&...args) {
-    if (m_atm_severity.load() < severity) {
+    if (m_atm_severity.load() < severity)
       return emitter{message_data_t{m_char_allocator}};
-    }
 
     auto &&msgstr = slug_fmt::basic_format_to<Char, CharTraits, Allocator>(
         m_char_allocator, fmt, args...);
