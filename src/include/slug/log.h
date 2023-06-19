@@ -663,7 +663,7 @@ extern wlogger g_wlogger;
 
 #else
 
-#define SLUG_LOG(severity, msg) ((void)0)
+#define SLUG_LOG(path, fmt, ...) ((void)0)
 #define SLUG_SET_SEVERITY(severity) ((void)0)
 #define SLUG_OPEN_FILE(path, mode) ((void)0)
 #define SLUG_OPEN_CONSOLE(os) ((void)0)
