@@ -6,7 +6,7 @@
 
 = The Slug Logger
 
-Slug is lightweight C++17 logging library designed to provide a correct, safe and minimal logging interface.
+Slug is lightweight C++17 logging library designed to provide a correct, safe, and minimal logging interface.
 It is currently in active development.
 
 //toc::[]
@@ -15,14 +15,14 @@ It is currently in active development.
 
 * Macro-based global calls enables compile-time removal of all log messages for more efficient Release builds
 * ``inline``'d globals ensure correct linking regardless of whether Slug is linked as a shared or static library
-* Utilizes https://github.com/fmtlib/fmt/[libfmt] for all output formatting
+* Utilizes https://github.com/fmtlib/fmt/[{fmt}] for all message formatting
 * Allows for customized message formats through overriding the ``basic_message_format_base`` struct
-* Wide and native character aware
-* Allocator aware
+* Wide character support
+* Allocator-aware
 
 == Building Slug
 
-Slug requires CMake 3.12 or greater, https://github.com/fmtlib/fmt/[libfmt], and a C++17-compliant compiler.
+Slug requires CMake 3.12 or greater, https://github.com/fmtlib/fmt/[{fmt}], and a C++17-compliant compiler.
 https://github.com/catchorg/Catch2/[Catch2] is also required for building the test executable.
 Both libfmt and Catch2 are automatically downloaded through FetchContent if not already installed.
 
