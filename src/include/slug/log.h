@@ -353,14 +353,11 @@ struct basic_logger_config final {
   using char_t = Char;
   using char_traits_t = CharTraits;
 
-  template <typename T>
-  using allocator_t = Allocator<T>;
-
   using yaml_message_format_t =
-      basic_yaml_message_format<char_t, char_traits_t, allocator_t>;
+      basic_yaml_message_format<char_t, char_traits_t, Allocator>;
 
   using message_format_base_t =
-      basic_message_format_base<char_t, char_traits_t, allocator_t>;
+      basic_message_format_base<char_t, char_traits_t, Allocator>;
 
   using std_string_t = typename message_format_base_t::std_string_t;
 
@@ -391,11 +388,7 @@ struct basic_logger final {
   using char_t = Char;
   using char_traits_t = CharTraits;
 
-  template <typename T>
-  using allocator_t = Allocator<T>;
-
-  using logger_config_t =
-      basic_logger_config<char_t, char_traits_t, allocator_t>;
+  using logger_config_t = basic_logger_config<char_t, char_traits_t, Allocator>;
 
   using char_allocator_t = typename logger_config_t::char_allocator_t;
 
