@@ -68,8 +68,11 @@ using clock_time_point = typename clock_type::time_point;
 using rep = float;
 
 using seconds = std::chrono::duration<rep, std::ratio<1>>;
+
 using milliseconds = std::chrono::duration<rep, std::milli>;
+
 using microseconds = std::chrono::duration<rep, std::micro>;
+
 using nanoseconds = std::chrono::duration<rep, std::nano>;
 
 template <typename Duration>
