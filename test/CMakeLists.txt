@@ -29,4 +29,7 @@ target_compile_options(
           /W4
           /utf-8>)
 
-add_test(NAME slug-test COMMAND slug-test)
+add_executable(slug-test-header-only ${SLUG_PROJECT_DIR}/test/src/slug-test.cc)
+
+target_link_libraries(slug-test-header-only PRIVATE slug-header-only
+                                                    Catch2::Catch2WithMain)
