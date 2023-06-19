@@ -135,8 +135,6 @@ template <typename Char, typename CharTraits,
 /// @brief Log message severity level
 enum struct severity_t { Fatal, Error, Warning, Debug, Trace };
 
-/// @brief Severity string literals
-
 /// @brief Log message contents
 /// @tparam Char Character type
 /// @tparam CharTraits Character type traits
@@ -251,6 +249,7 @@ struct basic_message_format_base {
     return m_char_allocator;
   }
 
+  /// @brief Severity string literals
   [[nodiscard]] static constexpr std_string_view_t to_string_view(
       severity_t severity) noexcept {
     constexpr Char m_fatal_chars[] = {'f', 'a', 't', 'a', 'l', 0};
