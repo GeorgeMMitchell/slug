@@ -72,12 +72,6 @@ using milliseconds = std::chrono::duration<rep, std::milli>;
 using microseconds = std::chrono::duration<rep, std::micro>;
 using nanoseconds = std::chrono::duration<rep, std::nano>;
 
-/// @brief Duration type for program execution time
-using program_execution_duration = seconds;
-
-/// @brief Duration type for scope execution time
-using scope_execution_duration = microseconds;
-
 template <typename Duration>
 [[nodiscard]] constexpr auto to_seconds(Duration &&dur) noexcept {
   return std::chrono::duration_cast<seconds>(std::forward<Duration>(dur));
@@ -155,8 +149,25 @@ struct basic_message_data final {
   using std_string_t =
       std::basic_string<char_t, char_traits_t, char_allocator_t>;
 
+  /// @brief Duration type for program execution time
+  using program_execution_duration = slug_chrono::seconds;
+
+  /// @brief Duration type for scope execution time
+  using scope_execution_duration = slug_chrono::microseconds;
+
+  explicit basic_message_data()
+      : m_string{},
+        m_severity{},
+        m_start_time{},
+        m_program_time{},
+        m_thread_id{} {}
+
   explicit basic_message_data(char_allocator_t const &alloc)
-      : m_string{alloc} {}
+      : m_string{alloc},
+        m_severity{},
+        m_start_time{},
+        m_program_time{},
+        m_thread_id{} {}
 
   template <typename StrT>
   explicit basic_message_data(StrT &&str, severity_t severity,
@@ -169,12 +180,12 @@ struct basic_message_data final {
         m_thread_id{std::this_thread::get_id()} {}
 
   [[nodiscard]] constexpr auto program_execution_time() const noexcept
-      -> slug_chrono::program_execution_duration {
+      -> program_execution_duration {
     return m_program_time - m_start_time;
   }
 
   [[nodiscard]] constexpr auto scope_execution_time() const noexcept
-      -> slug_chrono::scope_execution_duration {
+      -> scope_execution_duration {
     return slug_chrono::clock_type::now() - m_program_time;
   }
 
@@ -187,10 +198,10 @@ struct basic_message_data final {
 
  protected:
   std_string_t const m_string;
-  severity_t const m_severity{};
-  slug_chrono::clock_time_point const m_start_time{};
-  slug_chrono::clock_time_point const m_program_time{};
-  std::thread::id const m_thread_id{};
+  severity_t const m_severity;
+  slug_chrono::clock_time_point const m_start_time;
+  slug_chrono::clock_time_point const m_program_time;
+  std::thread::id const m_thread_id;
 
 };  // basic_message_data
 
