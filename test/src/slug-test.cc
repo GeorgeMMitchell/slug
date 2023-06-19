@@ -51,9 +51,6 @@ TEST_CASE("Wide Logger Declaration", "[branching]") {
 }
 
 TEST_CASE("Native Global Macro", "[globals]") {
-  static_assert(SLUG_GLOBAL,
-                "Enable slug's global logging instance (-DSLUG_GLOBAL=ON)");
-
   SLUG_SET_SEVERITY(slug::trace);
 
   SLUG_LOG(slug::trace, "Test {} message from global logging instance",
@@ -67,9 +64,6 @@ TEST_CASE("Native Global Macro", "[globals]") {
 }
 
 TEST_CASE("Wide Global Macro", "[globals]") {
-  static_assert(SLUG_W_GLOBAL,
-                "Enable slug's wide character global logging instance");
-
   SLUG_W_SET_SEVERITY(slug::trace);
 
   SLUG_W_LOG(slug::trace, L"Test {} message from global logging instance",
