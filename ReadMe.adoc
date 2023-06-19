@@ -24,7 +24,7 @@ It is currently in active development.
 
 Slug requires CMake 3.12 or greater, https://github.com/fmtlib/fmt/[{fmt}], and a C++17-compliant compiler.
 https://github.com/catchorg/Catch2/[Catch2] is also required for building the test executable.
-Both libfmt and Catch2 are automatically downloaded through FetchContent if not already installed.
+Both {fmt} and Catch2 are automatically downloaded if not already installed.
 
 == Using Slug
 
