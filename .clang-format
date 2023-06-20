@@ -58,7 +58,7 @@ BraceWrapping:
   SplitEmptyFunction: false
   SplitEmptyNamespace: false
   SplitEmptyRecord: false
-AccessModifierOffset: 0
+AccessModifierOffset: -2
 AlignAfterOpenBracket: DontAlign
 AlignArrayOfStructures: Right
 AlignConsecutiveAssignments: AcrossEmptyLinesAndComments
@@ -68,7 +68,7 @@ AlignConsecutiveMacros: AcrossEmptyLinesAndComments
 AlignEscapedNewlines: Right
 AlignOperands: AlignAfterOperator
 AlignTrailingComments: true
-AlwaysBreakAfterReturnType: All
+AlwaysBreakAfterReturnType: AllDefinitions
 AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: Yes
 BitFieldColonSpacing: Both

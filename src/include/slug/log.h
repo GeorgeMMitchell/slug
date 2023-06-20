@@ -189,12 +189,12 @@ struct basic_message_data final {
     return m_thread_id;
   }
 
-  [[nodiscard]] constexpr auto
+  [[nodiscard]] constexpr severity_t
   severity() const noexcept {
     return m_severity;
   }
 
-  protected:
+private:
   std_string_t const                  m_string;
   severity_t const                    m_severity;
   slug_chrono::clock_time_point const m_start_time;
@@ -224,21 +224,17 @@ struct basic_message_format_base {
   /// @brief Creates log message string
   /// @param message_data Log message contents to stringify
   /// @returns std::string
-  [[nodiscard]] virtual std_string_t
-  create_message(message_data_t const& message_data)
+  [[nodiscard]] virtual std_string_t create_message(
+    message_data_t const& message_data)
     = 0;
 
   /// @brief Creates log message header string
   /// @returns std::string
-  [[nodiscard]] virtual std_string_t
-  create_header_message()
-    = 0;
+  [[nodiscard]] virtual std_string_t create_header_message() = 0;
 
   /// @brief Creates log message footer string
   /// @returns std::string
-  [[nodiscard]] virtual std_string_t
-  create_footer_message()
-    = 0;
+  [[nodiscard]] virtual std_string_t create_footer_message() = 0;
 
   virtual ~basic_message_format_base() { }
 
@@ -276,7 +272,7 @@ struct basic_message_format_base {
     return {};
   }
 
-  private:
+private:
   char_allocator_t const m_char_allocator;
 
 }; // basic_message_format_base
@@ -421,15 +417,11 @@ struct basic_logger final {
 
   ~basic_logger() { m_sink->print_footer_message(); }
 
-  basic_logger(basic_logger const&) = delete;
+  basic_logger(basic_logger const&)            = delete;
 
-  basic_logger&
-  operator=(basic_logger const&)
-    = delete;
+  basic_logger& operator=(basic_logger const&) = delete;
 
-  basic_logger&
-  operator=(basic_logger&&)
-    = delete;
+  basic_logger& operator=(basic_logger&&)      = delete;
 
   template <typename... Args>
   [[maybe_unused]] auto
@@ -594,14 +586,14 @@ struct basic_logger final {
         fmt::print(*this, &m_fmt_chars[0], std::forward<T>(v));
       }
 
-      private:
+    private:
       using std_filebuf = std::basic_filebuf<char_t, char_traits_t>;
 
       std_filebuf m_filebuf{};
 
     }; // ostream
 
-    private:
+  private:
     using std_scoped_lock    = std::scoped_lock<std::mutex>;
     using std_shared_ostream = std::shared_ptr<ostream>;
 
@@ -615,7 +607,7 @@ struct basic_logger final {
 
   }; // sink
 
-  private:
+private:
   using std_shared_sink_t = std::shared_ptr<sink>;
 
   std_shared_sink_t                   m_sink;
@@ -638,7 +630,7 @@ struct basic_logger final {
 
     ~emitter() { m_sink->print_message(m_data); }
 
-    private:
+  private:
     message_data_t const    m_data{};
     std_shared_sink_t const m_sink{};
 
