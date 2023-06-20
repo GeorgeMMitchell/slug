@@ -64,34 +64,38 @@ using clock_type       = std::chrono::system_clock;
 using clock_duration   = typename clock_type::duration;
 using clock_time_point = typename clock_type::time_point;
 
-using rep              = float;
+using rep = float;
 
-using seconds          = std::chrono::duration<rep, std::ratio<1>>;
-using milliseconds     = std::chrono::duration<rep, std::milli>;
-using microseconds     = std::chrono::duration<rep, std::micro>;
-using nanoseconds      = std::chrono::duration<rep, std::nano>;
+using seconds      = std::chrono::duration<rep, std::ratio<1>>;
+using milliseconds = std::chrono::duration<rep, std::milli>;
+using microseconds = std::chrono::duration<rep, std::micro>;
+using nanoseconds  = std::chrono::duration<rep, std::nano>;
 
 template <typename Duration>
 [[nodiscard]] constexpr seconds
-to_seconds(Duration&& dur) noexcept {
+to_seconds(Duration&& dur) noexcept
+{
   return std::chrono::duration_cast<seconds>(std::forward<Duration>(dur));
 }
 
 template <typename Duration>
 [[nodiscard]] constexpr milliseconds
-to_milliseconds(Duration&& dur) noexcept {
+to_milliseconds(Duration&& dur) noexcept
+{
   return std::chrono::duration_cast<milliseconds>(std::forward<Duration>(dur));
 }
 
 template <typename Duration>
 [[nodiscard]] constexpr microseconds
-to_microseconds(Duration&& dur) noexcept {
+to_microseconds(Duration&& dur) noexcept
+{
   return std::chrono::duration_cast<microseconds>(std::forward<Duration>(dur));
 }
 
 template <typename Duration>
 [[nodiscard]] constexpr nanoseconds
-to_nanoseconds(Duration&& dur) noexcept {
+to_nanoseconds(Duration&& dur) noexcept
+{
   return std::chrono::duration_cast<nanoseconds>(std::forward<Duration>(dur));
 }
 
@@ -111,7 +115,8 @@ template <typename Char, typename CharTraits,
   template <typename> typename Allocator, typename... Args>
 [[nodiscard]] static std::basic_string<Char, CharTraits, Allocator<Char>>
 basic_format_to(Allocator<Char> const&     alloc,
-  std::basic_string_view<Char, CharTraits> fmt, Args&&... args) {
+  std::basic_string_view<Char, CharTraits> fmt, Args&&... args)
+{
   using fmt_membuf_t
     = fmt::basic_memory_buffer<Char, fmt::inline_buffer_size, Allocator<Char>>;
 
@@ -152,45 +157,52 @@ struct basic_message_data final {
   using program_execution_duration = slug_chrono::seconds;
 
   /// @brief Duration type for scope execution time
-  using scope_execution_duration   = slug_chrono::microseconds;
+  using scope_execution_duration = slug_chrono::microseconds;
 
   explicit basic_message_data()
-    : m_string{}, m_severity{}, m_start_time{}, m_program_time{},
-      m_thread_id{} { }
+    : m_string{}, m_severity{}, m_start_time{}, m_program_time{}, m_thread_id{}
+  { }
 
   explicit basic_message_data(char_allocator_t const& alloc)
     : m_string{alloc}, m_severity{}, m_start_time{}, m_program_time{},
-      m_thread_id{} { }
+      m_thread_id{}
+  { }
 
   template <typename StrT>
   explicit basic_message_data(StrT&& str, severity_t severity,
     slug_chrono::clock_time_point start, char_allocator_t const& alloc)
     : m_string{std::forward<StrT>(str), alloc}, m_severity{severity},
       m_start_time{start}, m_program_time{slug_chrono::clock_type::now()},
-      m_thread_id{std::this_thread::get_id()} { }
+      m_thread_id{std::this_thread::get_id()}
+  { }
 
   [[nodiscard]] constexpr program_execution_duration
-  program_execution_time() const noexcept {
+  program_execution_time() const noexcept
+  {
     return m_program_time - m_start_time;
   }
 
   [[nodiscard]] constexpr scope_execution_duration
-  scope_execution_time() const noexcept {
+  scope_execution_time() const noexcept
+  {
     return slug_chrono::clock_type::now() - m_program_time;
   }
 
   [[nodiscard]] constexpr std_string_t const&
-  string() const& noexcept {
+  string() const& noexcept
+  {
     return m_string;
   }
 
   [[nodiscard]] constexpr std::thread::id const&
-  thread_id() const& noexcept {
+  thread_id() const& noexcept
+  {
     return m_thread_id;
   }
 
   [[nodiscard]] constexpr severity_t
-  severity() const noexcept {
+  severity() const noexcept
+  {
     return m_severity;
   }
 
@@ -210,16 +222,16 @@ private:
 template <typename Char, typename CharTraits,
   template <typename> typename Allocator>
 struct basic_message_format_base {
-  using message_data_t    = basic_message_data<Char, CharTraits, Allocator>;
+  using message_data_t = basic_message_data<Char, CharTraits, Allocator>;
 
-  using char_t            = Char;
-  using char_traits_t     = CharTraits;
+  using char_t        = Char;
+  using char_traits_t = CharTraits;
 
-  using char_allocator_t  = typename message_data_t::char_allocator_t;
+  using char_allocator_t = typename message_data_t::char_allocator_t;
 
   using std_string_view_t = std::basic_string_view<char_t, char_traits_t>;
 
-  using std_string_t      = typename message_data_t::std_string_t;
+  using std_string_t = typename message_data_t::std_string_t;
 
   /// @brief Creates log message string
   /// @param message_data Log message contents to stringify
@@ -241,16 +253,19 @@ struct basic_message_format_base {
   basic_message_format_base() noexcept : m_char_allocator{} { }
 
   explicit basic_message_format_base(char_allocator_t const& alloc) noexcept
-    : m_char_allocator{alloc} { }
+    : m_char_allocator{alloc}
+  { }
 
   [[nodiscard]] constexpr char_allocator_t const&
-  get_char_allocator() const& noexcept {
+  get_char_allocator() const& noexcept
+  {
     return m_char_allocator;
   }
 
   /// @brief Severity string literals
   [[nodiscard]] static constexpr std_string_view_t
-  to_string_view(severity_t severity) noexcept {
+  get_severity_literal(severity_t severity) noexcept
+  {
     constexpr char_t m_fatal_chars[]   = {'f', 'a', 't', 'a', 'l', 0};
     constexpr char_t m_error_chars[]   = {'e', 'r', 'r', 'o', 'r', 0};
     constexpr char_t m_warning_chars[] = {'w', 'a', 'r', 'n', 'i', 'n', 'g', 0};
@@ -294,11 +309,13 @@ struct basic_yaml_message_format final
 
   explicit basic_yaml_message_format(
     char_allocator_t const& char_allocator) noexcept
-    : message_format_base_t{char_allocator} { }
+    : message_format_base_t{char_allocator}
+  { }
 
   [[nodiscard]] virtual std_string_t
-  create_message(message_data_t const& message_data) override {
-    static constexpr auto get_fmt_chars = []() -> char_t const* {
+  create_message(message_data_t const& message_data) override
+  {
+    static constexpr auto&& fmt_chars = []() -> char_t const* {
       if constexpr (std::is_same_v<char_t, char>)
         return " - [{}, '{}', '{}', {{'scope_execution_time': {}, "
                "'thread_id': "
@@ -307,25 +324,29 @@ struct basic_yaml_message_format final
         return L" - [{}, '{}', '{}', {{'scope_execution_time': {}, "
                L"'thread_id': "
                L"{}}}]\n";
-    };
+    }();
 
     return slug_fmt::basic_format_to<Char, CharTraits, Allocator>(
-      message_format_base_t::get_char_allocator(), get_fmt_chars(),
+      message_format_base_t::get_char_allocator(), fmt_chars,
       message_data.program_execution_time().count(),
-      message_format_base_t::to_string_view(message_data.severity()),
+      message_format_base_t::get_severity_literal(message_data.severity()),
       message_data.string(), message_data.scope_execution_time().count(),
       message_data.thread_id());
   }
 
   [[nodiscard]] std_string_t
-  create_header_message() override {
+  create_header_message() override
+  {
     static constexpr char_t chars[] = {'-', '-', '-', '\n', 0};
+
     return std_string_t{&chars[0], message_format_base_t::get_char_allocator()};
   }
 
   [[nodiscard]] std_string_t
-  create_footer_message() override {
+  create_footer_message() override
+  {
     static constexpr char_t chars[] = {'.', '.', '.', '\n', 0};
+
     return std_string_t{&chars[0], message_format_base_t::get_char_allocator()};
   }
 
@@ -355,24 +376,24 @@ struct basic_logger_config final {
   using char_t        = Char;
   using char_traits_t = CharTraits;
 
-  using yaml_message_format_t
-    = basic_yaml_message_format<char_t, char_traits_t, Allocator>;
-
   using message_format_base_t
     = basic_message_format_base<char_t, char_traits_t, Allocator>;
 
-  using std_string_t     = typename message_format_base_t::std_string_t;
+  using std_string_t = typename message_format_base_t::std_string_t;
 
   using char_allocator_t = typename message_format_base_t::char_allocator_t;
 
-  severity_t                             severity = default_severity;
+  using yaml_message_format_t
+    = basic_yaml_message_format<char_t, char_traits_t, Allocator>;
+
+  severity_t severity = default_severity;
 
   std::shared_ptr<message_format_base_t> message_format
     = std::make_shared<yaml_message_format_t>(char_allocator_t{});
 
-  std::ios::openmode openmode       = std::ios::app;
+  std::ios::openmode openmode = std::ios::app;
 
-  char_allocator_t   char_allocator = char_allocator_t{};
+  char_allocator_t char_allocator = char_allocator_t{};
 
 }; // basic_logger_config
 
@@ -387,45 +408,49 @@ struct basic_logger final {
     "slug::basic_logger requires template parameter Char to be char or "
     "wchar_t");
 
-  using char_t          = Char;
-  using char_traits_t   = CharTraits;
+  using char_t        = Char;
+  using char_traits_t = CharTraits;
 
   using logger_config_t = basic_logger_config<char_t, char_traits_t, Allocator>;
 
-  using char_allocator_t      = typename logger_config_t::char_allocator_t;
+  using char_allocator_t = typename logger_config_t::char_allocator_t;
 
   using message_format_base_t = typename logger_config_t::message_format_base_t;
   using message_data_t        = typename message_format_base_t::message_data_t;
 
-  using std_ostream_t         = std::basic_ostream<char_t, char_traits_t>;
-  using std_string_view_t     = std::basic_string_view<char_t, char_traits_t>;
+  using std_ostream_t     = std::basic_ostream<char_t, char_traits_t>;
+  using std_string_view_t = std::basic_string_view<char_t, char_traits_t>;
 
-  using std_string_t          = typename logger_config_t::std_string_t;
+  using std_string_t = typename logger_config_t::std_string_t;
 
   explicit basic_logger(std_ostream_t& os, logger_config_t cfg = {})
     : m_sink{sink::make_shared_sink(os, cfg.message_format)},
-      m_atm_severity{cfg.severity}, m_char_allocator{cfg.char_allocator} { }
+      m_atm_severity{cfg.severity}, m_char_allocator{cfg.char_allocator}
+  { }
 
   explicit basic_logger(
     std::filesystem::path const& path, logger_config_t cfg = {})
     : m_sink{sink::make_shared_sink(path, cfg.openmode, cfg.message_format)},
-      m_atm_severity{cfg.severity}, m_char_allocator{cfg.char_allocator_t} { }
+      m_atm_severity{cfg.severity}, m_char_allocator{cfg.char_allocator_t}
+  { }
 
   basic_logger(basic_logger&& l) noexcept
     : m_sink{std::move(l.m_sink)}, m_atm_severity{std::move(m_atm_severity)},
-      m_char_allocator{std::move(l.m_char_allocator)} { }
+      m_char_allocator{std::move(l.m_char_allocator)}
+  { }
 
   ~basic_logger() { m_sink->print_footer_message(); }
 
-  basic_logger(basic_logger const&)            = delete;
+  basic_logger(basic_logger const&) = delete;
 
   basic_logger& operator=(basic_logger const&) = delete;
 
-  basic_logger& operator=(basic_logger&&)      = delete;
+  basic_logger& operator=(basic_logger&&) = delete;
 
   template <typename... Args>
   [[maybe_unused]] auto
-  log(severity_t severity, std_string_view_t fmt, Args&&... args) {
+  log(severity_t severity, std_string_view_t fmt, Args&&... args)
+  {
     if (m_atm_severity.load() < severity)
       return emitter{message_data_t{m_char_allocator}};
 
@@ -440,67 +465,78 @@ struct basic_logger final {
 
   void
   open_file(std::filesystem::path const& path,
-    std::ios::openmode                   openmode = std::ios::app) {
+    std::ios::openmode                   openmode = std::ios::app)
+  {
     m_sink->set_ostream(path, openmode);
   }
 
   void
-  open_console(std_ostream_t& os) {
+  open_console(std_ostream_t& os)
+  {
     m_sink->set_ostream(os);
   }
 
   void
-  set_severity(severity_t severity) noexcept {
+  set_severity(severity_t severity) noexcept
+  {
     m_atm_severity.store(severity);
   }
 
   [[nodiscard]] constexpr char_allocator_t const&
-  get_allocator() const& noexcept {
+  get_allocator() const& noexcept
+  {
     return m_char_allocator;
   }
 
   [[nodiscard]] constexpr severity_t
-  get_severity() const noexcept {
+  get_severity() const noexcept
+  {
     return m_atm_severity.load();
   }
 
   [[nodiscard]] constexpr slug_chrono::clock_time_point
-  get_start_time() const noexcept {
+  get_start_time() const noexcept
+  {
     return m_start_time;
   }
 
   /// @brief Formats message data and prints the data to a given ostream
   struct sink final {
-    sink()            = default;
+    sink() = default;
 
     sink(sink const&) = default;
 
-    sink(sink&&)      = default;
+    sink(sink&&) = default;
 
     sink(std_ostream_t& os, std::shared_ptr<message_format_base_t> const& fmt)
-      : m_ostream{ostream::make_shared_ostream(os)}, m_format{fmt} { }
+      : m_ostream{ostream::make_shared_ostream(os)}, m_format{fmt}
+    { }
 
     sink(std::filesystem::path const& path, std::ios::openmode mode,
       std::shared_ptr<message_format_base_t> const& fmt)
-      : m_ostream{ostream::make_shared_ostream(path, mode)}, m_format{fmt} { }
+      : m_ostream{ostream::make_shared_ostream(path, mode)}, m_format{fmt}
+    { }
 
     [[nodiscard]] static auto
     make_shared_sink(
-      std_ostream_t& os, std::shared_ptr<message_format_base_t> const& fmt) {
+      std_ostream_t& os, std::shared_ptr<message_format_base_t> const& fmt)
+    {
       return std::make_shared<sink>(os, fmt);
     }
 
     [[nodiscard]] static auto
     make_shared_sink(std::filesystem::path const& path, std::ios::openmode mode,
-      std::shared_ptr<message_format_base_t> const& fmt) {
+      std::shared_ptr<message_format_base_t> const& fmt)
+    {
       return std::make_shared<sink>(path, mode, fmt);
     }
 
     void
-    print_message(message_data_t const& msgdata) {
+    print_message(message_data_t const& msgdata)
+    {
       print_header_message();
 
-      static_cast<void>(std_scoped_lock{m_sink_mtx});
+      static_cast<void>(std_scoped_lock_t{m_sink_mtx});
 
       if (m_ostream && m_format) {
         m_ostream->print_value(m_format->create_message(msgdata));
@@ -508,32 +544,37 @@ struct basic_logger final {
     }
 
     void
-    print_header_message() {
-      static_cast<void>(std_scoped_lock{m_sink_mtx});
+    print_header_message()
+    {
+      static_cast<void>(std_scoped_lock_t{m_sink_mtx});
 
       if (m_ostream && m_format && !m_first_message_printed) {
         m_ostream->print_value(m_format->create_header_message());
+
         m_first_message_printed = true;
       }
     }
 
     void
-    print_footer_message() {
-      static_cast<void>(std_scoped_lock{m_sink_mtx});
+    print_footer_message()
+    {
+      static_cast<void>(std_scoped_lock_t{m_sink_mtx});
 
       if (m_ostream && m_format && m_first_message_printed
           && !m_last_message_printed)
       {
         m_ostream->print_value(m_format->create_footer_message());
+
         m_last_message_printed = true;
       }
     }
 
     void
-    set_ostream(std_ostream_t& os) {
+    set_ostream(std_ostream_t& os)
+    {
       print_footer_message();
 
-      static_cast<void>(std_scoped_lock{m_sink_mtx});
+      static_cast<void>(std_scoped_lock_t{m_sink_mtx});
 
       m_ostream               = ostream::make_shared_ostream(os);
       m_last_message_printed  = false;
@@ -541,10 +582,11 @@ struct basic_logger final {
     }
 
     void
-    set_ostream(std::filesystem::path const& path, std::ios::openmode mode) {
+    set_ostream(std::filesystem::path const& path, std::ios::openmode mode)
+    {
       print_footer_message();
 
-      static_cast<void>(std_scoped_lock{m_sink_mtx});
+      static_cast<void>(std_scoped_lock_t{m_sink_mtx});
 
       m_ostream               = ostream::make_shared_ostream(path, mode);
       m_last_message_printed  = false;
@@ -558,30 +600,35 @@ struct basic_logger final {
       explicit ostream(std_ostream_t& os) : std_ostream_t{os.rdbuf()} { }
 
       ostream(std::filesystem::path const& path, std::ios::openmode mode)
-        : std_ostream_t{&m_filebuf} {
+        : std_ostream_t{&m_filebuf}
+      {
         m_filebuf.open(path, mode | std::ios::out);
       }
 
-      ~ostream() override {
+      ~ostream() override
+      {
         if (m_filebuf.is_open()) {
           m_filebuf.close();
         }
       }
 
       [[nodiscard]] static auto
-      make_shared_ostream(std_ostream_t& os) {
+      make_shared_ostream(std_ostream_t& os)
+      {
         return std::make_shared<ostream>(os);
       }
 
       [[nodiscard]] static auto
       make_shared_ostream(
-        std::filesystem::path const& path, std::ios::openmode mode) {
+        std::filesystem::path const& path, std::ios::openmode mode)
+      {
         return std::make_shared<ostream>(path, mode);
       }
 
       template <typename T>
       void
-      print_value(T&& v) {
+      print_value(T&& v)
+      {
         static constexpr char_t m_fmt_chars[] = {'{', '}', 0};
         fmt::print(*this, &m_fmt_chars[0], std::forward<T>(v));
       }
@@ -594,14 +641,14 @@ struct basic_logger final {
     }; // ostream
 
   private:
-    using std_scoped_lock    = std::scoped_lock<std::mutex>;
+    using std_scoped_lock_t  = std::scoped_lock<std::mutex>;
     using std_shared_ostream = std::shared_ptr<ostream>;
 
     std_shared_ostream                     m_ostream;
     std::shared_ptr<message_format_base_t> m_format;
 
-    bool                                   m_first_message_printed = false;
-    bool                                   m_last_message_printed  = false;
+    bool m_first_message_printed = false;
+    bool m_last_message_printed  = false;
 
     std::mutex mutable m_sink_mtx{};
 
@@ -610,9 +657,9 @@ struct basic_logger final {
 private:
   using std_shared_sink_t = std::shared_ptr<sink>;
 
-  std_shared_sink_t                   m_sink;
-  std::atomic<severity_t>             m_atm_severity;
-  char_allocator_t                    m_char_allocator;
+  std_shared_sink_t       m_sink;
+  std::atomic<severity_t> m_atm_severity;
+  char_allocator_t        m_char_allocator;
 
   slug_chrono::clock_time_point const m_start_time{
     slug_chrono::clock_type::now()};
@@ -622,11 +669,13 @@ private:
     emitter() = default;
 
     explicit emitter(message_data_t&& msgdata, std_shared_sink_t const& s = {})
-      : m_data{std::move(msgdata)}, m_sink{s} { }
+      : m_data{std::move(msgdata)}, m_sink{s}
+    { }
 
     explicit emitter(
       message_data_t const& msgdata, std_shared_sink_t const& s = {})
-      : m_data{msgdata}, m_sink{s} { }
+      : m_data{msgdata}, m_sink{s}
+    { }
 
     ~emitter() { m_sink->print_message(m_data); }
 
@@ -647,8 +696,8 @@ namespace pmr {
 template <typename T>
 using allocator = std::pmr::polymorphic_allocator<T>;
 
-using logger    = basic_logger<char, std::char_traits<char>, allocator>;
-using wlogger   = basic_logger<wchar_t, std::char_traits<wchar_t>, allocator>;
+using logger  = basic_logger<char, std::char_traits<char>, allocator>;
+using wlogger = basic_logger<wchar_t, std::char_traits<wchar_t>, allocator>;
 
 } // namespace pmr
 

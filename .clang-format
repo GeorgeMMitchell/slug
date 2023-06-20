@@ -24,8 +24,8 @@ SpaceAroundPointerQualifiers: Before
 DerivePointerAlignment: false
 PointerAlignment: Left
 ReferenceAlignment: Pointer
-#QualifierAlignment: Right
-#QualifierOrder: ['friend', 'static', 'constexpr', 'inline', 'type', 'const', 'volatile']
+QualifierAlignment: Custom
+QualifierOrder: ['inline', 'static', 'constexpr', 'type', 'const', 'volatile' ]
 BinPackArguments: true
 BinPackParameters: true
 PackConstructorInitializers: BinPack
@@ -46,7 +46,7 @@ BraceWrapping:
   AfterClass: false
   AfterControlStatement: MultiLine
   AfterEnum: false
-  AfterFunction: false
+  AfterFunction: true
   AfterNamespace: false
   AfterStruct: false
   AfterUnion: false
@@ -61,9 +61,9 @@ BraceWrapping:
 AccessModifierOffset: -2
 AlignAfterOpenBracket: DontAlign
 AlignArrayOfStructures: Right
-AlignConsecutiveAssignments: AcrossEmptyLinesAndComments
+AlignConsecutiveAssignments: Consecutive
 AlignConsecutiveBitFields: AcrossEmptyLinesAndComments
-AlignConsecutiveDeclarations: AcrossEmptyLinesAndComments
+AlignConsecutiveDeclarations: Consecutive
 AlignConsecutiveMacros: AcrossEmptyLinesAndComments
 AlignEscapedNewlines: Right
 AlignOperands: AlignAfterOperator
