@@ -243,7 +243,7 @@ struct basic_message_format_base {
   explicit basic_message_format_base(char_allocator_t const& alloc) noexcept
     : m_char_allocator{alloc} { }
 
-  [[nodiscard]] constexpr auto&
+  [[nodiscard]] constexpr char_allocator_t const&
   get_char_allocator() const& noexcept {
     return m_char_allocator;
   }
@@ -454,17 +454,17 @@ struct basic_logger final {
     m_atm_severity.store(severity);
   }
 
-  [[nodiscard]] constexpr auto&
+  [[nodiscard]] constexpr char_allocator_t const&
   get_allocator() const& noexcept {
     return m_char_allocator;
   }
 
-  [[nodiscard]] constexpr auto
+  [[nodiscard]] constexpr severity_t
   get_severity() const noexcept {
     return m_atm_severity.load();
   }
 
-  [[nodiscard]] constexpr auto
+  [[nodiscard]] constexpr slug_chrono::clock_time_point
   get_start_time() const noexcept {
     return m_start_time;
   }
