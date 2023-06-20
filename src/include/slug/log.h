@@ -425,17 +425,17 @@ struct basic_logger final {
 
   explicit basic_logger(std_ostream_t& os, logger_config_t cfg = {})
     : m_sink{sink::make_shared_sink(os, cfg.message_format)},
-      m_atm_severity{cfg.severity}, m_char_allocator{cfg.char_allocator}
+      m_severity_atm{cfg.severity}, m_char_allocator{cfg.char_allocator}
   { }
 
   explicit basic_logger(
     std::filesystem::path const& path, logger_config_t cfg = {})
     : m_sink{sink::make_shared_sink(path, cfg.openmode, cfg.message_format)},
-      m_atm_severity{cfg.severity}, m_char_allocator{cfg.char_allocator_t}
+      m_severity_atm{cfg.severity}, m_char_allocator{cfg.char_allocator_t}
   { }
 
   basic_logger(basic_logger&& l) noexcept
-    : m_sink{std::move(l.m_sink)}, m_atm_severity{std::move(m_atm_severity)},
+    : m_sink{std::move(l.m_sink)}, m_severity_atm{std::move(m_severity_atm)},
       m_char_allocator{std::move(l.m_char_allocator)}
   { }
 
@@ -451,7 +451,7 @@ struct basic_logger final {
   [[maybe_unused]] auto
   log(severity_t severity, std_string_view_t fmt, Args&&... args)
   {
-    if (m_atm_severity.load() < severity)
+    if (m_severity_atm.load() < severity)
       return emitter{message_data_t{m_char_allocator}};
 
     auto&& msgstr = slug_fmt::basic_format_to<Char, CharTraits, Allocator>(
@@ -479,7 +479,7 @@ struct basic_logger final {
   void
   set_severity(severity_t severity) noexcept
   {
-    m_atm_severity.store(severity);
+    m_severity_atm.store(severity);
   }
 
   [[nodiscard]] constexpr char_allocator_t const&
@@ -491,7 +491,7 @@ struct basic_logger final {
   [[nodiscard]] constexpr severity_t
   get_severity() const noexcept
   {
-    return m_atm_severity.load();
+    return m_severity_atm.load();
   }
 
   [[nodiscard]] constexpr slug_chrono::clock_time_point
@@ -658,7 +658,7 @@ private:
   using std_shared_sink_t = std::shared_ptr<sink>;
 
   std_shared_sink_t       m_sink;
-  std::atomic<severity_t> m_atm_severity;
+  std::atomic<severity_t> m_severity_atm;
   char_allocator_t        m_char_allocator;
 
   slug_chrono::clock_time_point const m_start_time{
