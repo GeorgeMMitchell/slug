@@ -14,7 +14,7 @@ It is currently in active development.
 == Features
 
 * Macro-based global calls enables compile-time removal of all log messages for more efficient Release builds
-* ``inline``'d globals ensure correct linking regardless of whether Slug is linked as a shared or static library
+* C++17's inline globals ensure correct linking regardless of whether Slug is linked as a shared or static library
 * Utilizes https://github.com/fmtlib/fmt/[{fmt}] for all message formatting
 * Allows for customized message formats through overriding the ``basic_message_format_base`` struct
 * Wide character support
@@ -24,7 +24,7 @@ It is currently in active development.
 
 Slug requires CMake 3.12 or greater, https://github.com/fmtlib/fmt/[{fmt}], and a C++17-compliant compiler.
 https://github.com/catchorg/Catch2/[Catch2] is also required for building the test executable.
-Both {fmt} and Catch2 are automatically downloaded if not already installed.
+Both {fmt} and Catch2 are automatically downloaded through CMake if not already installed.
 
 == Using Slug
 
